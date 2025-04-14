@@ -64,6 +64,11 @@ function Login() {
 					<button type='submit' className='w-full bg-primary text-background py-2 px-4 rounded-md font-medium hover:bg-opacity-90 transition-colors'>
 						Login
 					</button>
+					<p className='text-sm text-center text-gray-400 mt-4'>
+						<a href='/forgot-password' className='text-primary hover:underline'>
+							Forgot your password?
+						</a>
+					</p>
 
 					{error && <p className='text-red-500 text-sm text-center mt-2'>{error}</p>}
 				</form>

@@ -16,5 +16,6 @@ export function getFirebaseAuthErrorMessage(error: FirebaseError): string {
 			return 'Too many login attempts. Please wait and try again later.';
 		default:
 			return 'An unexpected error occurred. Please try again.';
+		
 	}
 }
