@@ -1,10 +1,12 @@
 import { ChangeEvent } from 'react';
 import { Maintenance } from '../types/maintenance';
+import EditableCell from './EditableCell';
 
 interface Props {
 	maintenances: Maintenance[];
 	onUpdate: (data: Maintenance[]) => void;
 }
+
 function MaintenanceTable({ maintenances, onUpdate }: Props) {
 	const handleChange = (id: string, field: keyof Maintenance, value: string | number) => {
 		const updated = maintenances.map(m => (m.id === id ? { ...m, [field]: value } : m));
@@ -26,27 +28,14 @@ function MaintenanceTable({ maintenances, onUpdate }: Props) {
 				<tbody>
 					{maintenances.map(m => (
 						<tr key={m.id} className='border-b border-gray-700 hover:bg-muted transition'>
-							{/* Data */}
 							<td className='px-4 py-2'>
-								<input
-									type='date'
-									className='bg-transparent border border-gray-500 px-2 py-1 rounded text-sm w-full'
-									value={m.date}
-									onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(m.id, 'date', e.target.value)}
-								/>
+								<EditableCell value={m.date} type='date' onChange={val => handleChange(m.id, 'date', val)} />
 							</td>
 
-							{/* Descrição */}
 							<td className='px-4 py-2'>
-								<input
-									type='text'
-									className='bg-transparent border border-gray-500 px-2 py-1 rounded text-sm w-full'
-									value={m.description}
-									onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(m.id, 'description', e.target.value)}
-								/>
+								<EditableCell value={m.description} onChange={val => handleChange(m.id, 'description', val)} />
 							</td>
 
-							{/* Veículo */}
 							<td className='px-4 py-2'>
 								<select
 									className='bg-transparent border border-gray-500 px-2 py-1 rounded text-sm w-full'
@@ -55,29 +44,15 @@ function MaintenanceTable({ maintenances, onUpdate }: Props) {
 								>
 									<option value='v1'>Lexus RX</option>
 									<option value='v2'>Street Bob</option>
-									{/* futuras opções dinâmicas */}
 								</select>
 							</td>
 
-							{/* KM */}
 							<td className='px-4 py-2'>
-								<input
-									type='number'
-									className='bg-transparent border border-gray-500 px-2 py-1 rounded text-sm w-full'
-									value={m.kilometers}
-									onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(m.id, 'kilometers', Number(e.target.value))}
-								/>
+								<EditableCell value={m.kilometers} type='number' onChange={val => handleChange(m.id, 'kilometers', val)} />
 							</td>
 
-							{/* Custo */}
 							<td className='px-4 py-2'>
-								<input
-									type='number'
-									step='0.01'
-									className='bg-transparent border border-gray-500 px-2 py-1 rounded text-sm w-full'
-									value={m.cost}
-									onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(m.id, 'cost', Number(e.target.value))}
-								/>
+								<EditableCell value={m.cost} type='number' onChange={val => handleChange(m.id, 'cost', val)} />
 							</td>
 						</tr>
 					))}
