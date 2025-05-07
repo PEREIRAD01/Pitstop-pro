@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { fetchUserVehicles } from '../services/vehicles';
 import { getAuth } from 'firebase/auth';
+import { fetchUserVehicles } from '../services/vehicles';
+import AddVehicleModal from '../components/modals/AddVehicleModal';
 
 type Vehicle = {
 	id: string;
@@ -16,13 +17,14 @@ type Vehicle = {
 
 const Vehicles: React.FC = () => {
 	const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+	const [showModal, setShowModal] = useState(false);
 
 	useEffect(() => {
 		const loadVehicles = async () => {
 			const auth = getAuth();
 			const currentUser = auth.currentUser;
 
-			console.log('User UID:', currentUser?.uid); 
+			console.log('User UID:', currentUser?.uid);
 
 			const data = await fetchUserVehicles();
 			setVehicles(data);
@@ -38,8 +40,12 @@ const Vehicles: React.FC = () => {
 					<h1 className='text-3xl font-bold'>My Vehicles</h1>
 					<p className='text-gray-500'>Manage your cars and motorcycles below.</p>
 				</div>
-				<button className='bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded transition'>Add Vehicle</button>
+				<button className='bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded transition' onClick={() => setShowModal(true)}>
+					Add Vehicle
+				</button>
 			</div>
+
+			<AddVehicleModal isOpen={showModal} onClose={() => setShowModal(false)} />
 
 			<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
 				{vehicles.length === 0 ? (
@@ -61,4 +67,3 @@ const Vehicles: React.FC = () => {
 };
 
 export default Vehicles;
-
