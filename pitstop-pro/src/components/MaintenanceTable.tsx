@@ -18,11 +18,11 @@ function MaintenanceTable({ maintenances, onUpdate }: Props) {
 			<table className='min-w-full text-sm text-left'>
 				<thead className='bg-background border-b border-gray-600'>
 					<tr>
-						<th className='px-4 py-3 font-medium'>Data</th>
-						<th className='px-4 py-3 font-medium'>Descrição</th>
-						<th className='px-4 py-3 font-medium'>Veículo</th>
+						<th className='px-4 py-3 font-medium'>Date</th>
+						<th className='px-4 py-3 font-medium'>Description</th>
+						<th className='px-4 py-3 font-medium'>Vehicle</th>
 						<th className='px-4 py-3 font-medium'>KM</th>
-						<th className='px-4 py-3 font-medium'>Custo (€)</th>
+						<th className='px-4 py-3 font-medium'>Cost (€)</th>
 					</tr>
 				</thead>
 				<tbody>

@@ -26,7 +26,7 @@ function MaintenancePage() {
 
 	return (
 		<div className='p-6 max-w-7xl mx-auto'>
-			<h1 className='text-2xl font-bold mb-6'>Manutenções Feitas</h1>
+			<h1 className='text-2xl font-bold mb-6'>Maintenance History</h1>
 			<MaintenanceTable maintenances={maintenances} onUpdate={setMaintenances} />
 		</div>
 	);
