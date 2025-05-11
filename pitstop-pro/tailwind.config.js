@@ -11,6 +11,9 @@ export default {
 				surface: '#2e2e2e',
 				text: '#ffffff',
 			},
+			spacing: {
+				navbar: '6rem',
+			},
 		},
 	},
 	plugins: [],

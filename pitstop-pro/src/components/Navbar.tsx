@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import logo from '../assets/logo-flat.png';
 import { useLocation } from 'react-router-dom';
+import UserInfo from './UserInfo';
 
 function Navbar() {
 	const { user, logout } = useAuth();
@@ -28,54 +29,58 @@ function Navbar() {
 					<span className='text-xl font-semibold text-primary hidden sm:inline'>PitStop Pro</span>
 				</Link>
 
-				<ul className='flex gap-4 items-center text-sm sm:text-base'>
-					{user ? (
-						<>
-							{user && location.pathname === '/' && (
-								<li>
-									<Link
-										to='/dashboard'
-										className='px-4 py-2 rounded-md border border-primary text-primary bg-surface hover:bg-primary hover:text-background focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors cursor-pointer'
-									>
-										My Garage
-									</Link>
-								</li>
-							)}
-							<li>
-								<button
-									onClick={handleLogout}
-									className='px-4 py-2 rounded-md border border-primary text-primary bg-surface hover:bg-primary hover:text-background focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors cursor-pointer'
-								>
-									Logout
-								</button>
-							</li>
-						</>
-					) : (
-						<>
-							{!user && location.pathname !== '/login' && (
-								<li>
-									<Link
-										to='/login'
-										className='px-4 py-2 rounded-md border border-primary text-primary bg-surface hover:bg-primary hover:text-background focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors cursor-pointer'
-									>
-										Login
-									</Link>
-								</li>
-							)}
+				<div className='flex items-center gap-4'>
+					{user && <UserInfo />}
 
-							{!user && location.pathname !== '/register' && (
+					<ul className='flex gap-4 items-center text-sm sm:text-base'>
+						{user ? (
+							<>
+								{location.pathname === '/' && (
+									<li>
+										<Link
+											to='/dashboard'
+											className='px-4 py-2 rounded-md border border-primary text-primary bg-surface hover:bg-primary hover:text-background focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors cursor-pointer'
+										>
+											My Garage
+										</Link>
+									</li>
+								)}
 								<li>
-									<Link
-										to='/register'
-										className='px-4 py-2 rounded-md bg-primary text-background hover:bg-opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors cursor-pointer'
+									<button
+										onClick={handleLogout}
+										className='px-4 py-2 rounded-md border border-primary text-primary bg-surface hover:bg-primary hover:text-background focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors cursor-pointer'
 									>
-										Register
-									</Link>
+										Logout
+									</button>
 								</li>
-							)}
-						</>
-					)}
-				</ul>
+							</>
+						) : (
+							<>
+								{location.pathname !== '/login' && (
+									<li>
+										<Link
+											to='/login'
+											className='px-4 py-2 rounded-md border border-primary text-primary bg-surface hover:bg-primary hover:text-background focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors cursor-pointer'
+										>
+											Login
+										</Link>
+									</li>
+								)}
+
+								{location.pathname !== '/register' && (
+									<li>
+										<Link
+											to='/register'
+											className='px-4 py-2 rounded-md bg-primary text-background hover:bg-opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors cursor-pointer'
+										>
+											Register
+										</Link>
+									</li>
+								)}
+							</>
+						)}
+					</ul>
+				</div>
 			</div>
 		</nav>
 	);

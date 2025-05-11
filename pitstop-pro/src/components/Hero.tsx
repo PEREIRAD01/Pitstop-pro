@@ -6,7 +6,7 @@ function Hero() {
 	const { user } = useAuth();
 
 	return (
-		<section className='bg-surface text-text py-16 px-6'>
+		<section className='bg-surface text-text py-16 px-6 pt-navbar'>
 			<div className='max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12'>
 				<div className='flex-1 space-y-6'>
 					<h1 className='text-4xl sm:text-5xl font-bold leading-tight text-primary'>Simplified Vehicle Management</h1>
