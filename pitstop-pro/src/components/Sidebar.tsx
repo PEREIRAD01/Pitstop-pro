@@ -1,12 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
 
 const menuItems = [
-	{ path: '/dashboard', label: 'Visão Geral' },
-	{ path: '/vehicles', label: 'Veículos' },
-	{ path: '/maintenance', label: 'Manutenções' },
-	{ path: '/expenses', label: 'Despesas' },
-	{ path: '/documents', label: 'Documentos' },
-	{ path: '/settings', label: 'Configurações' },
+	{ path: '/dashboard', label: 'Overview' },
+	{ path: '/vehicles', label: 'Vehicles' },
+	{ path: '/maintenance', label: 'Maintenance' },
+	{ path: '/expenses', label: 'Expenses' },
+	{ path: '/documents', label: 'Documents' },
+	{ path: '/settings', label: 'Settings' },
 ];
 
 function Sidebar() {
