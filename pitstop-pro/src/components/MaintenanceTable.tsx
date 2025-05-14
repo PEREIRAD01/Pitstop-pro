@@ -1,6 +1,7 @@
 import { ChangeEvent } from 'react';
 import { Maintenance } from '../types/maintenance';
 import EditableCell from './EditableCell';
+import { useUserVehicles } from '../hooks/useUserVehicles';
 
 interface Props {
 	maintenances: Maintenance[];
@@ -8,10 +9,16 @@ interface Props {
 }
 
 function MaintenanceTable({ maintenances, onUpdate }: Props) {
+	const { vehicles, loading } = useUserVehicles();
+
 	const handleChange = (id: string, field: keyof Maintenance, value: string | number) => {
 		const updated = maintenances.map(m => (m.id === id ? { ...m, [field]: value } : m));
 		onUpdate(updated);
 	};
+
+	if (loading) {
+		return <div className='p-6 text-muted-foreground text-center'>Loading vehicles...</div>;
+	}
 
 	return (
 		<div className='overflow-x-auto rounded-lg border border-gray-700 shadow-sm bg-surface'>
@@ -42,8 +49,12 @@ function MaintenanceTable({ maintenances, onUpdate }: Props) {
 									value={m.vehicleId}
 									onChange={(e: ChangeEvent<HTMLSelectElement>) => handleChange(m.id, 'vehicleId', e.target.value)}
 								>
-									<option value='v1'>Lexus RX</option>
-									<option value='v2'>Street Bob</option>
+									<option value=''>Select a vehicle</option>
+									{vehicles.map(v => (
+										<option key={v.id} value={v.id}>
+											{v.brand} {v.model}
+										</option>
+									))}
 								</select>
 							</td>
 
