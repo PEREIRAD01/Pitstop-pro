@@ -1,19 +1,20 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Trash, PencilSimple } from 'phosphor-react';
+import { PencilSimple, Trash, Eye } from 'phosphor-react';
 import { GarageVehicle } from '../../types/garageVehicle';
-import { deleteDoc, doc } from 'firebase/firestore';
+import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
+import GarageEventLine from './GarageEventLine';
 
 type Props = {
 	vehicle: GarageVehicle;
 	onDelete: () => void;
 	onEdit: (vehicle: GarageVehicle) => void;
+	onView?: (vehicle: GarageVehicle) => void;
 };
 
-const GarageVehicleCard: React.FC<Props> = ({ vehicle, onDelete, onEdit }) => {
+const GarageVehicleCard: React.FC<Props> = ({ vehicle, onDelete, onEdit, onView }) => {
 	const handleDelete = async () => {
-		const confirmDelete = window.confirm(`Are you sure you want to delete ${vehicle.brand} ${vehicle.model}?`);
+		const confirmDelete = window.confirm(`Are you sure you want to delete ${vehicle.vehicleName || vehicle.brand + ' ' + vehicle.model}?`);
 		if (!confirmDelete) return;
 
 		try {
@@ -24,32 +25,61 @@ const GarageVehicleCard: React.FC<Props> = ({ vehicle, onDelete, onEdit }) => {
 		}
 	};
 
+	const markAsDone = async (field: keyof GarageVehicle) => {
+		try {
+			const ref = doc(db, 'vehicles', vehicle.id);
+			await updateDoc(ref, {
+				[field]: true,
+			});
+			onEdit({ ...vehicle, [field]: true });
+		} catch (err) {
+			console.error('Failed to update field:', field, err);
+		}
+	};
+
 	return (
-		<motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: 'easeOut' }} className='border p-4 rounded shadow-sm bg-surface relative'>
-			<h2 className='font-semibold text-lg'>
-				{vehicle.brand} {vehicle.model}
-			</h2>
-			<p className='text-sm text-gray-500'>{vehicle.licensePlate}</p>
-			<p className='text-sm text-gray-500'>{vehicle.kilometers} km</p>
+		<div className='p-4 rounded-xl bg-surface border border-border flex flex-col justify-between shadow-sm'>
+			<div className='flex items-start gap-4'>
+				{/* Foto + Matrícula */}
+				<div className='flex flex-col items-center w-24 shrink-0'>
+					{vehicle.image ? (
+						<img src={vehicle.image} alt='Vehicle' className='rounded-full w-20 h-20 object-cover border border-border' />
+					) : (
+						<div className='rounded-full w-20 h-20 bg-background flex items-center justify-center text-sm text-text-muted border border-dashed border-border'>No photo</div>
+					)}
+					<p className='text-xs text-text-muted mt-2'>{vehicle.licensePlate}</p>
+				</div>
 
-			<button
-				onClick={() => onEdit(vehicle)}
-				aria-label={`Edit ${vehicle.brand} ${vehicle.model}`}
-				title={`Edit ${vehicle.brand} ${vehicle.model}`}
-				className='absolute top-2 right-9 text-gray-400 hover:text-blue-500 transition-colors'
-			>
-				<PencilSimple size={20} weight='light' />
-			</button>
+				{/* Info do veículo */}
+				<div className='flex-1'>
+					<h2 className='text-lg font-semibold text-text'>{vehicle.vehicleName || `${vehicle.brand} ${vehicle.model}`}</h2>
+					<p className='text-sm font-medium mt-2'>This year:</p>
+					<ul className='mt-1 space-y-1'>
+						<GarageEventLine label='Insurance' date={vehicle.insuranceDate} done={vehicle.insuranceDone} onMarkAsDone={() => markAsDone('insuranceDone')} />
+						<GarageEventLine label='Inspection' date={vehicle.inspectionDate} done={vehicle.inspectionDone} onMarkAsDone={() => markAsDone('inspectionDone')} />
+						<GarageEventLine label='Car Circulation Unified Tax' date={vehicle.taxDate} done={vehicle.taxDone} onMarkAsDone={() => markAsDone('taxDone')} />
+						<GarageEventLine label='Scheduled vehicle service' date={vehicle.maintenanceDate} done={vehicle.maintenanceDone} onMarkAsDone={() => markAsDone('maintenanceDone')} />
+					</ul>
+				</div>
+			</div>
 
-			<button
-				onClick={handleDelete}
-				aria-label={`Delete ${vehicle.brand} ${vehicle.model}`}
-				title={`Delete ${vehicle.brand} ${vehicle.model}`}
-				className='absolute top-2 right-2 text-gray-400 hover:text-red-600 transition-colors'
-			>
-				<Trash size={20} weight='light' />
-			</button>
-		</motion.div>
+			{/* Ações */}
+			<div className='mt-4 flex justify-between items-center'>
+				<button onClick={() => onView?.(vehicle)} className='text-sm font-medium text-accent hover:underline flex items-center gap-1'>
+					<Eye size={16} />
+					See more
+				</button>
+
+				<div className='flex gap-4'>
+					<button onClick={() => onEdit(vehicle)} title='Edit' aria-label='Edit vehicle' className='text-text-muted hover:text-accent transition-colors'>
+						<PencilSimple size={20} />
+					</button>
+					<button onClick={handleDelete} title='Delete' aria-label='Delete vehicle' className='text-text-muted hover:text-red-500 transition-colors'>
+						<Trash size={20} />
+					</button>
+				</div>
+			</div>
+		</div>
 	);
 };
 
