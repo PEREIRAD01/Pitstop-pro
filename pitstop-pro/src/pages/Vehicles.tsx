@@ -24,7 +24,7 @@ const Vehicles: React.FC = () => {
 			const auth = getAuth();
 			const currentUser = auth.currentUser;
 
-			console.log('User UID:', currentUser?.uid);
+			if (!currentUser) return;
 
 			const data = await fetchUserVehicles();
 			setVehicles(data);
