@@ -8,4 +8,9 @@ export type GarageVehicle = {
 	kilometers: number;
 	year: number;
 	image: string;
+	vehicleName?: string;
+	insuranceDate?: string;
+	inspectionDate?: string;
+	taxDate?: string;
+	maintenanceDate?: string;
 };

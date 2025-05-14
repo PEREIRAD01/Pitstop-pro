@@ -10,6 +10,11 @@ export default {
 				background: '#1e1e1e',
 				surface: '#2e2e2e',
 				text: '#ffffff',
+
+				border: '#3f3f3f',
+				accent: '#00b36b', 
+				input: '#383838',
+				'text-muted': '#bfbfbf',
 			},
 			spacing: {
 				navbar: '6rem',

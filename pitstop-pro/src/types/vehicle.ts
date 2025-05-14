@@ -11,4 +11,9 @@ export interface Vehicle {
 	revisionDone: boolean;
 	inspectionDone: boolean;
 	totalCostThisYear: number;
+	vehicleName?: string;
+	insuranceDate?: string;
+	inspectionDate?: string;
+	taxDate?: string;
+	maintenanceDate?: string;
 }
