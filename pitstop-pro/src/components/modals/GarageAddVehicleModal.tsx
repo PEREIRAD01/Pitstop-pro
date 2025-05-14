@@ -1,5 +1,5 @@
 import React from 'react';
-import GarageAddVehicleForm from '../GarageAddVehicleForm';
+import GarageAddVehicleForm from '../forms/GarageAddVehicleForm';
 
 type Props = {
 	isOpen: boolean;
