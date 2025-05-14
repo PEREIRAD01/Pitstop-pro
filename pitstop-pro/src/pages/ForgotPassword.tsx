@@ -8,11 +8,13 @@ function ForgotPassword() {
 	const [email, setEmail] = useState('');
 	const [message, setMessage] = useState('');
 	const [error, setError] = useState('');
+	const [loading, setLoading] = useState(false);
 
 	const handleReset = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setMessage('');
 		setError('');
+		setLoading(true);
 
 		try {
 			await sendPasswordResetEmail(auth, email);
@@ -21,6 +23,8 @@ function ForgotPassword() {
 			const error = err as FirebaseError;
 			setError(getFirebaseAuthErrorMessage(error));
 			console.error('Password reset error:', error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -37,8 +41,12 @@ function ForgotPassword() {
 						required
 						className='w-full px-4 py-2 rounded-md bg-background border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base'
 					/>
-					<button type='submit' className='w-full bg-primary text-background py-2 px-4 rounded-md font-medium hover:bg-opacity-90 transition-colors'>
-						Send reset link
+					<button
+						type='submit'
+						className='w-full bg-primary text-background py-2 px-4 rounded-md font-medium hover:bg-opacity-90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed'
+						disabled={loading}
+					>
+						{loading ? 'Sending...' : 'Send reset link'}
 					</button>
 				</form>
 
