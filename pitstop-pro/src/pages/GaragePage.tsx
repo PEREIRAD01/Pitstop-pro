@@ -44,7 +44,11 @@ const GaragePage: React.FC = () => {
 			/>
 
 			<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-				{vehicles.length === 0 ? <div className='text-gray-500 text-center col-span-full'>No vehicles found.</div> : vehicles.map(vehicle => <GarageVehicleCard key={vehicle.id} vehicle={vehicle} />)}
+				{vehicles.length === 0 ? (
+					<div className='text-gray-500 text-center col-span-full'>No vehicles found.</div>
+				) : (
+					vehicles.map(vehicle => <GarageVehicleCard key={vehicle.id} vehicle={vehicle} onDelete={loadVehicles} />)
+				)}
 			</div>
 		</div>
 	);
