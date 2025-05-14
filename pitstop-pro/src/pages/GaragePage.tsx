@@ -9,17 +9,17 @@ const GaragePage: React.FC = () => {
 	const [vehicles, setVehicles] = useState<GarageVehicle[]>([]);
 	const [showModal, setShowModal] = useState(false);
 
+	const loadVehicles = async () => {
+		const auth = getAuth();
+		const currentUser = auth.currentUser;
+
+		if (!currentUser) return;
+
+		const data = await fetchUserVehicles();
+		setVehicles(data);
+	};
+
 	useEffect(() => {
-		const loadVehicles = async () => {
-			const auth = getAuth();
-			const currentUser = auth.currentUser;
-
-			if (!currentUser) return;
-
-			const data = await fetchUserVehicles();
-			setVehicles(data);
-		};
-
 		loadVehicles();
 	}, []);
 
@@ -35,7 +35,13 @@ const GaragePage: React.FC = () => {
 				</button>
 			</div>
 
-			<GarageAddVehicleModal isOpen={showModal} onClose={() => setShowModal(false)} />
+			<GarageAddVehicleModal
+				isOpen={showModal}
+				onClose={() => {
+					setShowModal(false);
+					loadVehicles();
+				}}
+			/>
 
 			<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
 				{vehicles.length === 0 ? <div className='text-gray-500 text-center col-span-full'>No vehicles found.</div> : vehicles.map(vehicle => <GarageVehicleCard key={vehicle.id} vehicle={vehicle} />)}
