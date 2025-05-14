@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { getAuth } from 'firebase/auth';
 import { fetchUserVehicles } from '../services/vehicles';
 import GarageAddVehicleModal from '../components/modals/GarageAddVehicleModal';
+import GarageEditVehicleModal from '../components/modals/GarageEditVehicleModal';
 import GarageVehicleCard from '../components/garage/GarageVehicleCard';
 import { GarageVehicle } from '../types/garageVehicle';
 
 const GaragePage: React.FC = () => {
 	const [vehicles, setVehicles] = useState<GarageVehicle[]>([]);
 	const [showModal, setShowModal] = useState(false);
+	const [showEditModal, setShowEditModal] = useState(false);
+	const [selectedVehicle, setSelectedVehicle] = useState<GarageVehicle | null>(null);
 
 	const loadVehicles = async () => {
 		const auth = getAuth();
@@ -43,11 +46,33 @@ const GaragePage: React.FC = () => {
 				}}
 			/>
 
+			{showEditModal && selectedVehicle && (
+				<GarageEditVehicleModal
+					isOpen={showEditModal}
+					onClose={() => {
+						setShowEditModal(false);
+						setSelectedVehicle(null);
+						loadVehicles();
+					}}
+					vehicle={selectedVehicle}
+				/>
+			)}
+
 			<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
 				{vehicles.length === 0 ? (
 					<div className='text-gray-500 text-center col-span-full'>No vehicles found.</div>
 				) : (
-					vehicles.map(vehicle => <GarageVehicleCard key={vehicle.id} vehicle={vehicle} onDelete={loadVehicles} />)
+					vehicles.map(vehicle => (
+						<GarageVehicleCard
+							key={vehicle.id}
+							vehicle={vehicle}
+							onDelete={loadVehicles}
+							onEdit={v => {
+								setSelectedVehicle(v);
+								setShowEditModal(true);
+							}}
+						/>
+					))
 				)}
 			</div>
 		</div>
