@@ -3,7 +3,7 @@ import PrivateRoute from '../components/PrivateRoute';
 import PrivateLayout from '../layouts/PrivateLayout';
 import Dashboard from '../pages/Dashboard';
 import MaintenancePage from '../pages/Maintenance';
-import Vehicles from '../pages/Vehicles';
+import Vehicles from '../pages/GaragePage';
 
 const PrivateRoutes = (
 	<Route

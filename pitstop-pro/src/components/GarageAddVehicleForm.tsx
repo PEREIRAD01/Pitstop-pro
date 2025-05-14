@@ -3,11 +3,11 @@ import { getAuth } from 'firebase/auth';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
-type AddVehicleFormProps = {
+type GarageAddVehicleFormProps = {
 	onSuccess?: () => void;
 };
 
-const AddVehicleForm: React.FC<AddVehicleFormProps> = ({ onSuccess }) => {
+const GarageAddVehicleForm: React.FC<GarageAddVehicleFormProps> = ({ onSuccess }) => {
 	const [brand, setBrand] = useState('');
 	const [model, setModel] = useState('');
 	const [licensePlate, setLicensePlate] = useState('');
@@ -70,4 +70,4 @@ const AddVehicleForm: React.FC<AddVehicleFormProps> = ({ onSuccess }) => {
 	);
 };
 
-export default AddVehicleForm;
+export default GarageAddVehicleForm;
