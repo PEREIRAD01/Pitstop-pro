@@ -5,6 +5,7 @@ import GarageAddVehicleModal from '../components/modals/GarageAddVehicleModal';
 import GarageEditVehicleModal from '../components/modals/GarageEditVehicleModal';
 import GarageVehicleCard from '../components/garage/GarageVehicleCard';
 import { GarageVehicle } from '../types/garageVehicle';
+import carIllustration from '../assets/car-illustration.png';
 
 const GaragePage: React.FC = () => {
 	const [vehicles, setVehicles] = useState<GarageVehicle[]>([]);
@@ -33,7 +34,7 @@ const GaragePage: React.FC = () => {
 					<h1 className='text-3xl font-bold'>My Garage</h1>
 					<p className='text-gray-500'>Manage your cars and motorcycles below.</p>
 				</div>
-				<button className='bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded transition' onClick={() => setShowModal(true)}>
+				<button onClick={() => setShowModal(true)} className='bg-accent/90 hover:bg-accent text-white font-medium px-4 py-2 rounded transition'>
 					Add Vehicle
 				</button>
 			</div>
@@ -58,11 +59,17 @@ const GaragePage: React.FC = () => {
 				/>
 			)}
 
-			<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-				{vehicles.length === 0 ? (
-					<div className='text-gray-500 text-center col-span-full'>No vehicles found.</div>
-				) : (
-					vehicles.map(vehicle => (
+			{vehicles.length === 0 ? (
+				<div className='flex flex-col items-center justify-center text-center text-text-muted py-20 gap-6'>
+					<img src={carIllustration} alt='No vehicles' className='w-40 h-auto opacity-70' />
+					<div>
+						<p className='text-lg font-medium'>You haven't added any vehicles yet.</p>
+						<p className='text-sm'>Click the button above to start your garage.</p>
+					</div>
+				</div>
+			) : (
+				<div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+					{vehicles.map(vehicle => (
 						<GarageVehicleCard
 							key={vehicle.id}
 							vehicle={vehicle}
@@ -72,9 +79,9 @@ const GaragePage: React.FC = () => {
 								setShowEditModal(true);
 							}}
 						/>
-					))
-				)}
-			</div>
+					))}
+				</div>
+			)}
 		</div>
 	);
 };

@@ -1,33 +1,46 @@
 import React from 'react';
-import { format } from 'date-fns';
-import { Check } from 'phosphor-react';
 
 type Props = {
 	label: string;
 	date?: string;
 	done?: boolean;
-	onMarkAsDone?: () => void;
+	onMarkAsDone: () => void;
 };
 
 const GarageEventLine: React.FC<Props> = ({ label, date, done, onMarkAsDone }) => {
-	const formatDate = (value?: string) => {
-		if (!value) return '-';
-		const parsed = new Date(value);
-		return isNaN(parsed.getTime()) ? '-' : format(parsed, 'MMMM, d');
-	};
+	let formattedDate = 'No date set';
+	let dateStatusClass = 'text-xs';
+
+	if (date) {
+		const today = new Date();
+		const target = new Date(date);
+		formattedDate = target.toLocaleDateString();
+
+		const isPast = target < new Date(today.setHours(0, 0, 0, 0));
+		const isToday = target.toDateString() === new Date().toDateString();
+
+		if (isToday) {
+			dateStatusClass += ' text-warning/70 font-medium';
+		} else if (isPast) {
+			dateStatusClass += ' text-destructive/70 line-through';
+		} else {
+			dateStatusClass += ' text-muted-foreground';
+		}
+	} else {
+		dateStatusClass += ' text-muted-foreground';
+	}
 
 	return (
-		<li className='text-sm text-text-muted flex items-center justify-between'>
-			<span>
-				{label}: {done ? <span className='text-primary font-semibold'>&#10003; Done</span> : formatDate(date)}
-			</span>
+		<>
+			<div>
+				<p className='text-sm font-medium'>{label}</p>
+				<p className={dateStatusClass}>{formattedDate}</p>
+			</div>
 
-			{!done && onMarkAsDone && (
-				<button type='button' onClick={onMarkAsDone} title={`Mark ${label.toLowerCase()} as done`} className='text-xs text-accent hover:underline flex items-center gap-1 ml-2'>
-					<Check size={14} /> Mark as done
-				</button>
-			)}
-		</li>
+			<div className='flex items-center justify-center'>
+				<input type='checkbox' checked={done} onClick={e => e.stopPropagation()} onChange={onMarkAsDone} className='accent-accent w-4 h-4' />
+			</div>
+		</>
 	);
 };
 
