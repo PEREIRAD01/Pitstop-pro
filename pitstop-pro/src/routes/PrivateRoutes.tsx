@@ -2,7 +2,7 @@ import { Route } from 'react-router-dom';
 import PrivateRoute from '../components/PrivateRoute';
 import PrivateLayout from '../layouts/PrivateLayout';
 import Dashboard from '../pages/Dashboard';
-import MaintenancePage from '../pages/Maintenance';
+import MaintenancePage from '../pages/MaintenancePage';
 import Vehicles from '../pages/GaragePage';
 
 const PrivateRoutes = (
