@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { TrackedPart } from '../../types/maintenance';
 import { useUserVehicles } from '../../hooks/useUserVehicles';
+import { getAuth } from 'firebase/auth';
 
 type Props = {
 	isOpen: boolean;
@@ -56,6 +57,11 @@ function AddTrackedPartModal({ isOpen, mode, defaultValues, onClose, onAdd, onEd
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
+
+		const auth = getAuth();
+		const user = auth.currentUser;
+		if (!user) return;
+
 		const vehicle = vehicles.find(v => v.id === formData.vehicleId);
 		if (!vehicle) return;
 
@@ -69,6 +75,7 @@ function AddTrackedPartModal({ isOpen, mode, defaultValues, onClose, onAdd, onEd
 			validForMonths: formData.validForMonths ? Number(formData.validForMonths) : undefined,
 			validForKm: formData.validForKm ? Number(formData.validForKm) : undefined,
 			notes: formData.notes || '',
+			userId: user.uid,
 		};
 
 		if (mode === 'edit' && onEdit) {

@@ -3,9 +3,10 @@ export type TrackedPart = {
 	vehicleId: string;
 	vehicleName?: string;
 	partName: string;
-	installDate: string; 
+	installDate: string;
 	installKilometers: number;
-	validForMonths?: number; 
-	validForKm?: number; 
+	validForMonths?: number;
+	validForKm?: number;
+	userId: string;
 	notes?: string;
 };
