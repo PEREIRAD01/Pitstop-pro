@@ -1,25 +1,52 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TrackedPart } from '../../types/maintenance';
 import { useUserVehicles } from '../../hooks/useUserVehicles';
 
 type Props = {
 	isOpen: boolean;
+	mode: 'add' | 'edit';
+	defaultValues?: TrackedPart | null;
 	onClose: () => void;
 	onAdd: (newPart: TrackedPart) => void;
+	onEdit?: (updatedPart: TrackedPart) => void;
 };
 
-function AddTrackedPartModal({ isOpen, onClose, onAdd }: Props) {
+function AddTrackedPartModal({ isOpen, mode, defaultValues, onClose, onAdd, onEdit }: Props) {
 	const { vehicles } = useUserVehicles();
 
 	const [formData, setFormData] = useState({
 		vehicleId: '',
 		partName: '',
-		installDate: new Date().toISOString().split('T')[0],
+		installDate: '',
 		installKilometers: 0,
 		validForMonths: '',
 		validForKm: '',
 		notes: '',
 	});
+
+	useEffect(() => {
+		if (mode === 'edit' && defaultValues) {
+			setFormData({
+				vehicleId: defaultValues.vehicleId,
+				partName: defaultValues.partName,
+				installDate: defaultValues.installDate,
+				installKilometers: defaultValues.installKilometers,
+				validForMonths: defaultValues.validForMonths?.toString() || '',
+				validForKm: defaultValues.validForKm?.toString() || '',
+				notes: defaultValues.notes || '',
+			});
+		} else {
+			setFormData({
+				vehicleId: '',
+				partName: '',
+				installDate: new Date().toISOString().split('T')[0],
+				installKilometers: 0,
+				validForMonths: '',
+				validForKm: '',
+				notes: '',
+			});
+		}
+	}, [mode, defaultValues]);
 
 	if (!isOpen) return null;
 
@@ -29,12 +56,11 @@ function AddTrackedPartModal({ isOpen, onClose, onAdd }: Props) {
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-
 		const vehicle = vehicles.find(v => v.id === formData.vehicleId);
 		if (!vehicle) return;
 
-		const newPart: TrackedPart = {
-			id: crypto.randomUUID(),
+		const converted: TrackedPart = {
+			id: defaultValues?.id || crypto.randomUUID(),
 			vehicleId: formData.vehicleId,
 			vehicleName: vehicle.vehicleName || `${vehicle.brand} ${vehicle.model}`,
 			partName: formData.partName,
@@ -45,27 +71,29 @@ function AddTrackedPartModal({ isOpen, onClose, onAdd }: Props) {
 			notes: formData.notes || '',
 		};
 
-		onAdd(newPart);
+		if (mode === 'edit' && onEdit) {
+			onEdit(converted);
+		} else {
+			onAdd(converted);
+		}
+
 		onClose();
-		setFormData({
-			vehicleId: '',
-			partName: '',
-			installDate: new Date().toISOString().split('T')[0],
-			installKilometers: 0,
-			validForMonths: '',
-			validForKm: '',
-			notes: '',
-		});
 	};
 
 	return (
 		<div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
 			<div className='bg-surface p-6 rounded-lg w-full max-w-lg shadow-xl border border-border'>
-				<h2 className='text-xl font-semibold mb-4'>Add New Part</h2>
+				<h2 className='text-xl font-semibold mb-4'>{mode === 'edit' ? 'Edit Part' : 'Add New Part'}</h2>
 				<form onSubmit={handleSubmit} className='space-y-4'>
 					<div>
 						<label className='block text-sm font-medium mb-1'>Vehicle</label>
-						<select value={formData.vehicleId} onChange={e => handleChange('vehicleId', e.target.value)} className='w-full p-2 rounded-md bg-input text-text border border-border' required>
+						<select
+							value={formData.vehicleId}
+							onChange={e => handleChange('vehicleId', e.target.value)}
+							className='w-full p-2 rounded-md bg-input text-text border border-border'
+							required
+							disabled={mode === 'edit'}
+						>
 							<option value=''>Select a vehicle</option>
 							{vehicles.map(v => (
 								<option key={v.id} value={v.id}>
@@ -131,7 +159,7 @@ function AddTrackedPartModal({ isOpen, onClose, onAdd }: Props) {
 							Cancel
 						</button>
 						<button type='submit' className='px-4 py-2 rounded bg-primary text-white text-sm hover:bg-accent transition'>
-							Add Part
+							{mode === 'edit' ? 'Save Changes' : 'Add Part'}
 						</button>
 					</div>
 				</form>

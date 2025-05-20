@@ -3,9 +3,11 @@ import { useUserVehicles } from '../hooks/useUserVehicles';
 
 type Props = {
 	parts: TrackedPart[];
+	onEdit: (part: TrackedPart) => void;
+	onDelete: (id: string) => void;
 };
 
-function TrackedPartsTable({ parts }: Props) {
+function TrackedPartsTable({ parts, onEdit, onDelete }: Props) {
 	const { vehicles } = useUserVehicles();
 
 	const getLimitDate = (installDate: string, months?: number) => {
@@ -17,19 +19,13 @@ function TrackedPartsTable({ parts }: Props) {
 
 	const isOverdue = (part: TrackedPart) => {
 		const now = new Date();
-
 		const vehicle = vehicles.find(v => v.id === part.vehicleId);
-
 		const lastKmEntry = vehicle?.kilometerHistory?.at(-1);
 		const currentKm = lastKmEntry?.value ?? 0;
-
 		const dateLimit = part.validForMonths ? getLimitDate(part.installDate, part.validForMonths) : null;
-
 		const kmLimit = part.validForKm ? part.installKilometers + part.validForKm : null;
-
 		const dateExpired = dateLimit ? now > dateLimit : false;
 		const kmExpired = kmLimit !== null ? currentKm >= kmLimit : false;
-
 		return dateExpired || kmExpired;
 	};
 
@@ -48,6 +44,7 @@ function TrackedPartsTable({ parts }: Props) {
 						<th className='px-4 py-3 font-medium'>Installed</th>
 						<th className='px-4 py-3 font-medium'>Limits</th>
 						<th className='px-4 py-3 font-medium'>Status</th>
+						<th className='px-4 py-3 font-medium text-right'>Actions</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -68,6 +65,14 @@ function TrackedPartsTable({ parts }: Props) {
 									{dateLimit ? formatDate(dateLimit.toISOString()) : '–'} / {kmLimit ? `${kmLimit.toLocaleString()} km` : '–'}
 								</td>
 								<td className='px-4 py-2'>{overdue ? <span className='text-sm font-semibold text-destructive'>⚠️ Overdue</span> : <span className='text-sm text-green-500'>✔ OK</span>}</td>
+								<td className='px-4 py-2 text-right space-x-2'>
+									<button onClick={() => onEdit(part)} className='text-sm text-accent hover:underline'>
+										✏️ Edit
+									</button>
+									<button onClick={() => onDelete(part.id)} className='text-sm text-destructive hover:underline'>
+										🗑️ Delete
+									</button>
+								</td>
 							</tr>
 						);
 					})}
