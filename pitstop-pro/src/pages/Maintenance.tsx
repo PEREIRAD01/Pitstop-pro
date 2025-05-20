@@ -1,33 +1,35 @@
 import { useState } from 'react';
-import MaintenanceTable from '../components/MaintenanceTable';
-import { Maintenance } from '../types/maintenance';
+import { TrackedPart } from '../types/maintenance';
+import TrackedPartsTable from '../components/TrackedPartsTable';
 
 function MaintenancePage() {
-	const [maintenances, setMaintenances] = useState<Maintenance[]>([
+	const [parts] = useState<TrackedPart[]>([
 		{
 			id: '1',
-			date: '2025-04-03',
-			description: 'Troca de óleo e filtro',
 			vehicleId: 'v1',
 			vehicleName: 'Lexus RX',
-			kilometers: 125000,
-			cost: 120,
+			partName: 'Pastilhas de travão (frente)',
+			installDate: '2025-05-03',
+			installKilometers: 125000,
+			validForMonths: 24,
+			validForKm: 40000,
 		},
 		{
 			id: '2',
-			date: '2025-02-15',
-			description: 'Revisão geral',
 			vehicleId: 'v2',
 			vehicleName: 'Street Bob',
-			kilometers: 40000,
-			cost: 80,
+			partName: 'Filtro de óleo',
+			installDate: '2025-04-15',
+			installKilometers: 40000,
+			validForMonths: 6,
+			validForKm: 20000,
 		},
 	]);
 
 	return (
-		<div className='p-6 max-w-7xl mx-auto'>
-			<h1 className='text-2xl font-bold mb-6'>Maintenance History</h1>
-			<MaintenanceTable maintenances={maintenances} onUpdate={setMaintenances} />
+		<div className='p-6 max-w-7xl mx-auto space-y-6'>
+			<h1 className='text-2xl font-bold'>Maintenance - Tracked Parts</h1>
+			<TrackedPartsTable parts={parts} />
 		</div>
 	);
 }

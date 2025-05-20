@@ -39,7 +39,7 @@ const GarageVehicleForm: React.FC<Props> = ({ mode, defaultValues, onSuccess }) 
 				licensePlate: defaultValues.licensePlate,
 				type: defaultValues.type,
 				photoUrl: defaultValues.image || '',
-				kilometers: defaultValues.kilometers,
+				kilometers: defaultValues.kilometerHistory?.at(-1)?.value || 0,
 				year: defaultValues.year,
 				insuranceDate: defaultValues.insuranceDate || '',
 				inspectionDate: defaultValues.inspectionDate || '',
@@ -70,9 +70,24 @@ const GarageVehicleForm: React.FC<Props> = ({ mode, defaultValues, onSuccess }) 
 		}
 
 		const dataToSave = {
-			...formData,
+			vehicleName: formData.vehicleName,
+			brand: formData.brand,
+			model: formData.model,
+			licensePlate: formData.licensePlate,
+			type: formData.type,
 			image: formData.photoUrl,
+			year: formData.year,
+			insuranceDate: formData.insuranceDate,
+			inspectionDate: formData.inspectionDate,
+			taxDate: formData.taxDate,
+			maintenanceDate: formData.maintenanceDate,
 			userId: user.uid,
+			kilometerHistory: [
+				{
+					date: new Date().toISOString().split('T')[0],
+					value: formData.kilometers,
+				},
+			],
 		};
 
 		try {

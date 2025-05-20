@@ -1,9 +1,11 @@
-export interface Maintenance {
+export type TrackedPart = {
 	id: string;
-	date: string; 
-	description: string;
 	vehicleId: string;
-	vehicleName: string; 
-	kilometers: number;
-	cost: number;
-}
+	vehicleName?: string;
+	partName: string;
+	installDate: string; 
+	installKilometers: number;
+	validForMonths?: number; 
+	validForKm?: number; 
+	notes?: string;
+};

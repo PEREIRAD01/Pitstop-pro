@@ -6,10 +6,13 @@ export type GarageVehicle = {
 	licensePlate: string;
 	type: string;
 	year: number;
-	kilometers: number;
+	kilometerHistory: {
+		date: string;
+		value: number;
+	}[];
 	image: string;
 	vehicleName?: string;
-    insuranceDate?: string;
+	insuranceDate?: string;
 	inspectionDate?: string;
 	taxDate?: string;
 	maintenanceDate?: string;
