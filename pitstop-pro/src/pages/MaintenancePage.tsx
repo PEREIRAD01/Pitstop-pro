@@ -58,18 +58,25 @@ function MaintenancePage() {
 	};
 
 	return (
-		<div className='p-6 max-w-7xl mx-auto space-y-6'>
-			<div className='flex justify-between items-center'>
-				<h1 className='text-2xl font-bold'>Maintenance - Tracked Parts</h1>
-				<button onClick={openAddModal} className='bg-accent text-white px-4 py-2 rounded hover:bg-accent/90 transition'>
-					➕ Add Part
-				</button>
+		<>
+			<div className='p-6 max-w-7xl mx-auto space-y-6'>
+				<div className='flex justify-between items-center'>
+					<h1 className='text-2xl font-bold'>Maintenance - Tracked Parts</h1>
+					<button onClick={openAddModal} className='bg-accent text-white px-4 py-2 rounded hover:bg-accent/90 transition'>
+						➕ Add Part
+					</button>
+				</div>
+
+				{loading ? <p className='text-muted-foreground text-sm'>Loading parts...</p> : <TrackedPartsTable parts={parts} onEdit={openEditModal} onDelete={handleDeletePart} />}
 			</div>
 
-			{loading ? <p className='text-muted-foreground text-sm'>Loading parts...</p> : <TrackedPartsTable parts={parts} onEdit={openEditModal} onDelete={handleDeletePart} />}
-
-			<AddTrackedPartModal isOpen={showModal} mode={modalMode} defaultValues={partToEdit} onClose={() => setShowModal(false)} onAdd={handleAddPart} onEdit={handleEditPart} />
-		</div>
+			{/* Modal fora do layout limitado */}
+			{showModal && (
+				<div className='fixed inset-0 z-[999]'>
+					<AddTrackedPartModal isOpen={true} mode={modalMode} defaultValues={partToEdit} onClose={() => setShowModal(false)} onAdd={handleAddPart} onEdit={handleEditPart} />
+				</div>
+			)}
+		</>
 	);
 }
 

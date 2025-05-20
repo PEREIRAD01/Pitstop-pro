@@ -88,7 +88,7 @@ function AddTrackedPartModal({ isOpen, mode, defaultValues, onClose, onAdd, onEd
 	};
 
 	return (
-		<div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
+		<div className='fixed inset-0 bg-black/50 flex items-center justify-center z-[999]'>
 			<div className='bg-surface p-6 rounded-lg w-full max-w-lg shadow-xl border border-border'>
 				<h2 className='text-xl font-semibold mb-4'>{mode === 'edit' ? 'Edit Part' : 'Add New Part'}</h2>
 				<form onSubmit={handleSubmit} className='space-y-4'>
