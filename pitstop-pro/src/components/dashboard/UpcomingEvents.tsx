@@ -15,7 +15,7 @@ type EventItem = {
 function UpcomingEvents() {
 	const [events, setEvents] = useState<EventItem[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [visibleCount, setVisibleCount] = useState(7);
+	const [visibleCount, setVisibleCount] = useState(5);
 
 	useEffect(() => {
 		const loadEvents = async () => {
@@ -85,24 +85,28 @@ function UpcomingEvents() {
 							const isOverdue = new Date(event.date) < new Date();
 
 							return (
-								<li key={`${event.vehicleId}-${event.label}-${index}`} className='p-4 bg-surface border border-border rounded flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
-									<div className='flex items-center gap-3 text-text'>
+								<li key={`${event.vehicleId}-${event.label}-${index}`} className='p-4 bg-surface border border-border rounded flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+									<div className='flex items-center gap-4 text-text'>
 										{event.image ? (
-											<img src={event.image} alt='Vehicle' className='w-8 h-8 rounded-full object-cover border border-border' />
+											<img src={event.image} alt='Vehicle' className='w-10 h-10 sm:w-8 sm:h-8 rounded-full object-cover border border-border' />
 										) : (
-											<div className='w-8 h-8 rounded-full bg-background border border-dashed border-border flex items-center justify-center text-xs text-text-muted'>No photo</div>
+											<div className='w-10 h-10 sm:w-8 sm:h-8 rounded-full bg-background border border-dashed border-border flex items-center justify-center text-xs text-text-muted'>No photo</div>
 										)}
+
 										<div className='flex flex-col'>
-											<span>
+											<span className='text-sm sm:text-base'>
 												<strong>{formatDate(event.date)}</strong> — {event.label}
 											</span>
+
 											<Link to='/vehicles' className='text-accent text-sm underline-offset-2 hover:underline'>
 												{event.vehicleName}
 											</Link>
+
+											{isOverdue && <span className='text-xs font-semibold text-destructive sm:hidden mt-1'>⚠️ Overdue</span>}
 										</div>
 									</div>
 
-									{isOverdue && <span className='text-xs font-semibold text-destructive'>⚠️ Overdue</span>}
+									{isOverdue && <span className='text-xs font-semibold text-destructive hidden sm:block'>⚠️ Overdue</span>}
 								</li>
 							);
 						})}
@@ -110,8 +114,8 @@ function UpcomingEvents() {
 
 					{events.length > visibleCount && (
 						<div className='flex justify-center mt-4'>
-							<button onClick={() => setVisibleCount(prev => prev + 7)} className='text-sm text-accent hover:underline'>
-								See more
+							<button onClick={() => setVisibleCount(prev => prev + 5)} className='text-sm text-accent hover:underline'>
+								Load more
 							</button>
 						</div>
 					)}
