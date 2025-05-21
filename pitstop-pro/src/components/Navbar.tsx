@@ -1,11 +1,10 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import logo from '../assets/logo-flat.png';
-import { useLocation } from 'react-router-dom';
 import UserInfo from './UserInfo';
 
 type NavbarProps = {
-	onToggleSidebar: () => void;
+	onToggleSidebar?: () => void;
 };
 
 function Navbar({ onToggleSidebar }: NavbarProps) {
@@ -24,9 +23,11 @@ function Navbar({ onToggleSidebar }: NavbarProps) {
 		<nav className='fixed top-0 left-0 right-0 z-50 bg-surface text-text px-6 py-4 shadow-md'>
 			<div className='max-w-7xl mx-auto flex items-center justify-between'>
 				<div className='flex items-center gap-4'>
-					<button onClick={onToggleSidebar} className='md:hidden border border-border text-text rounded px-3 py-2 hover:bg-border transition' aria-label='Toggle menu'>
-						Menu
-					</button>
+					{onToggleSidebar && (
+						<button onClick={onToggleSidebar} className='md:hidden border border-border text-text rounded px-3 py-2 hover:bg-border transition' aria-label='Toggle menu'>
+							Menu
+						</button>
+					)}
 
 					<Link to='/' className='flex items-center gap-2 transition-transform hover:scale-105'>
 						<img src={logo} alt='' className='h-12 w-auto' />
