@@ -1,4 +1,5 @@
 import DeleteAccountSection from '../components/settings/DeleteAccountSection';
+import ChangePasswordSection from '../components/settings/ChangePasswordSection';
 
 function Settings() {
 	return (
@@ -12,7 +13,7 @@ function Settings() {
 
 			<section className='space-y-4'>
 				<h2 className='text-xl font-semibold'>Change Password</h2>
-				<p className='text-muted-foreground'>Feature coming soon.</p>
+				<ChangePasswordSection />
 			</section>
 
 			<DeleteAccountSection />
