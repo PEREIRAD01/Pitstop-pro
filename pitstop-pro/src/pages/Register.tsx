@@ -1,5 +1,6 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase/config';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from '../firebase/config';
 import { useNavigate } from 'react-router-dom';
 import RegisterForm from '../components/forms/RegisterForm';
 
@@ -7,7 +8,18 @@ export default function Register() {
 	const navigate = useNavigate();
 
 	const handleRegister = async (email: string, password: string) => {
-		await createUserWithEmailAndPassword(auth, email, password);
+		const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+		const user = userCredential.user;
+
+		await setDoc(doc(db, 'users', user.uid), {
+			displayName: '',
+			email: user.email,
+			photoUrl: '',
+			phone: '',
+			address: '',
+			createdAt: serverTimestamp(),
+		});
+
 		navigate('/dashboard');
 	};
 

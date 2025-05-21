@@ -1,5 +1,6 @@
 import DeleteAccountSection from '../components/settings/DeleteAccountSection';
 import ChangePasswordSection from '../components/settings/ChangePasswordSection';
+import EditProfileSection from '../components/settings/EditProfileSection';
 
 function Settings() {
 	return (
@@ -8,7 +9,7 @@ function Settings() {
 
 			<section className='space-y-4'>
 				<h2 className='text-xl font-semibold'>Edit Profile</h2>
-				<p className='text-muted-foreground'>Feature coming soon.</p>
+				<EditProfileSection />
 			</section>
 
 			<section className='space-y-4'>
