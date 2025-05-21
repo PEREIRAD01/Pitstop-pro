@@ -7,15 +7,13 @@ function PrivateLayout() {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 
 	return (
-		<div className='flex pt-16'>
+		<div className='pt-16 flex'>
 			<Sidebar isOpen={sidebarOpen} />
-
-			<main className={`px-6 py-8 w-full transition-all duration-300 ${sidebarOpen ? 'md:ml-64' : 'ml-0'}`}>
+			<main className={`w-full transition-all duration-300 px-6 py-8 ${sidebarOpen ? 'ml-64' : 'ml-0 md:ml-64'}`}>
 				<div className='max-w-7xl mx-auto'>
 					<Outlet />
 				</div>
 			</main>
-
 			<Navbar onToggleSidebar={() => setSidebarOpen(prev => !prev)} />
 		</div>
 	);

@@ -17,8 +17,7 @@ function Sidebar({ isOpen }: SidebarProps) {
 	const location = useLocation();
 
 	return (
-		<aside className={`${isOpen ? 'block' : 'hidden'} md:block fixed top-16 left-0 w-64 h-[calc(100vh-4rem)] bg-surface border-r border-border px-4 py-6 shadow-md z-10`}>
-			
+		<aside className={`${isOpen ? 'block' : 'hidden'} md:block fixed top-16 left-0 w-64 h-[calc(100vh-4rem)] bg-surface border-r border-border px-4 py-6 shadow-md z-20`}>
 			<nav className='space-y-2'>
 				{menuItems.map(item => (
 					<Link
