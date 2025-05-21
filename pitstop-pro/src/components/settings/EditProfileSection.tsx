@@ -1,21 +1,48 @@
 import { useEffect, useState } from 'react';
 import { getAuth, updateProfile } from 'firebase/auth';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 
 function EditProfileSection() {
 	const auth = getAuth();
 	const user = auth.currentUser;
 
-	const [name, setName] = useState('');
+	const [formData, setFormData] = useState({
+		displayName: '',
+		photoUrl: '',
+		phone: '',
+		address: '',
+	});
+
 	const [message, setMessage] = useState('');
 	const [error, setError] = useState('');
 
 	useEffect(() => {
-		if (user?.displayName) {
-			setName(user.displayName);
-		}
+		const loadProfile = async () => {
+			if (!user) return;
+
+			const docRef = doc(db, 'users', user.uid);
+			const docSnap = await getDoc(docRef);
+
+			if (docSnap.exists()) {
+				const data = docSnap.data();
+				setFormData({
+					displayName: data.displayName || '',
+					photoUrl: data.photoUrl || '',
+					phone: data.phone || '',
+					address: data.address || '',
+				});
+			}
+		};
+
+		loadProfile();
 	}, [user]);
 
-	const handleUpdateProfile = async (e: React.FormEvent) => {
+	const handleChange = (field: string, value: string) => {
+		setFormData(prev => ({ ...prev, [field]: value }));
+	};
+
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setMessage('');
 		setError('');
@@ -23,7 +50,8 @@ function EditProfileSection() {
 		if (!user) return;
 
 		try {
-			await updateProfile(user, { displayName: name });
+			await updateDoc(doc(db, 'users', user.uid), { ...formData });
+			await updateProfile(user, { displayName: formData.displayName });
 			setMessage('Profile updated successfully.');
 		} catch (err) {
 			console.error(err);
@@ -33,17 +61,38 @@ function EditProfileSection() {
 
 	return (
 		<section className='space-y-4'>
-			
-			<form onSubmit={handleUpdateProfile} className='space-y-4 max-w-sm'>
-				<div>
-					<label className='block text-sm font-medium text-text-muted mb-1'>Your Name</label>
-					<input type='text' value={name} onChange={e => setName(e.target.value)} className='w-full px-3 py-2 rounded border border-border bg-input text-text' />
-				</div>
+			<form onSubmit={handleSubmit} className='space-y-4 max-w-sm'>
+				<input
+					type='text'
+					placeholder='Your name'
+					value={formData.displayName}
+					onChange={e => handleChange('displayName', e.target.value)}
+					className='w-full px-3 py-2 rounded border border-border bg-input text-text'
+				/>
 
-				<div>
-					<label className='block text-sm font-medium text-text-muted mb-1'>Email</label>
-					<input type='email' value={user?.email || ''} disabled className='w-full px-3 py-2 rounded border border-border bg-muted text-muted-foreground' />
-				</div>
+				<input
+					type='url'
+					placeholder='Photo URL'
+					value={formData.photoUrl}
+					onChange={e => handleChange('photoUrl', e.target.value)}
+					className='w-full px-3 py-2 rounded border border-border bg-input text-text'
+				/>
+
+				<input
+					type='tel'
+					placeholder='Phone number'
+					value={formData.phone}
+					onChange={e => handleChange('phone', e.target.value)}
+					className='w-full px-3 py-2 rounded border border-border bg-input text-text'
+				/>
+
+				<input
+					type='text'
+					placeholder='Address'
+					value={formData.address}
+					onChange={e => handleChange('address', e.target.value)}
+					className='w-full px-3 py-2 rounded border border-border bg-input text-text'
+				/>
 
 				<button type='submit' className='px-4 py-2 rounded border border-primary text-primary bg-surface hover:bg-primary hover:text-white transition-colors'>
 					Update Profile
