@@ -65,10 +65,11 @@ function EditProfileSection() {
 
 	return (
 		<section>
-			<h2 className='text-xl font-semibold mb-4'>Edit Profile</h2>
+			<h2 className='text-xl font-semibold mb-4'>Edit Profile:        </h2>
 
 			<div className='flex flex-col lg:flex-row gap-8'>
 				<form onSubmit={handleSubmit} className='space-y-4 max-w-sm w-full'>
+					<label className='block text-sm font-medium text-text-muted mb-1'>Name</label>
 					<input
 						type='text'
 						placeholder='Your name'
@@ -76,7 +77,7 @@ function EditProfileSection() {
 						onChange={e => handleChange('displayName', e.target.value)}
 						className='w-full px-3 py-2 rounded border border-border bg-input text-text'
 					/>
-
+					<label className='block text-sm font-medium text-text-muted mb-1'>Profile Photo URL:</label>
 					<input
 						type='url'
 						placeholder='Photo URL'
@@ -84,7 +85,7 @@ function EditProfileSection() {
 						onChange={e => handleChange('photoUrl', e.target.value)}
 						className='w-full px-3 py-2 rounded border border-border bg-input text-text'
 					/>
-
+					<label className='block text-sm font-medium text-text-muted mb-1'>Phone Number:</label>
 					<input
 						type='tel'
 						placeholder='Phone number'
@@ -92,7 +93,7 @@ function EditProfileSection() {
 						onChange={e => handleChange('phone', e.target.value)}
 						className='w-full px-3 py-2 rounded border border-border bg-input text-text'
 					/>
-
+					<label className='block text-sm font-medium text-text-muted mb-1'>Current Location (city, state):</label>
 					<input
 						type='text'
 						placeholder='Address'
