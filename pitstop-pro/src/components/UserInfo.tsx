@@ -1,23 +1,20 @@
-import React from 'react';
-import { getAuth } from 'firebase/auth';
+import { useAuth } from '../hooks/useAuth';
 
-const UserInfo: React.FC = () => {
-	const user = getAuth().currentUser;
-	const displayName = user?.displayName || user?.email;
-	const photoURL = user?.photoURL;
+function UserInfo() {
+	const { user } = useAuth();
 
 	if (!user) return null;
 
 	return (
-		<div className='flex items-center gap-2'>
-			{photoURL ? (
-				<img src={photoURL} alt='User Avatar' className='w-8 h-8 rounded-full object-cover' />
+		<div className='flex items-center gap-3'>
+			{user.photoURL ? (
+				<img src={user.photoURL} alt={user.displayName || 'User'} className='w-10 h-10 rounded-full object-cover border border-border shadow' />
 			) : (
-				<div className='w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-semibold'>{displayName?.charAt(0).toUpperCase()}</div>
+				<div className='w-10 h-10 rounded-full bg-muted text-background flex items-center justify-center font-semibold'>{user.displayName?.charAt(0).toUpperCase() ?? 'U'}</div>
 			)}
-			<span className='text-sm text-gray-800 dark:text-gray-200'>{displayName}</span>
+			<span className='text-sm'>{user.displayName}</span>
 		</div>
 	);
-};
+}
 
 export default UserInfo;

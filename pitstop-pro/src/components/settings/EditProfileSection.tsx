@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { getAuth, updateProfile } from 'firebase/auth';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
+import { useAuth } from '../../hooks/useAuth';
+import { saveUserProfile } from '../../services/user';
+import { updateProfile } from 'firebase/auth';
 import { db } from '../../firebase/config';
 
 function EditProfileSection() {
-	const auth = getAuth();
-	const user = auth.currentUser;
+	const { user } = useAuth();
 
 	const [formData, setFormData] = useState({
 		displayName: '',
@@ -21,11 +22,11 @@ function EditProfileSection() {
 		const loadProfile = async () => {
 			if (!user) return;
 
-			const docRef = doc(db, 'users', user.uid);
-			const docSnap = await getDoc(docRef);
+			const ref = doc(db, 'users', user.uid);
+			const snapshot = await getDoc(ref);
 
-			if (docSnap.exists()) {
-				const data = docSnap.data();
+			if (snapshot.exists()) {
+				const data = snapshot.data();
 				setFormData({
 					displayName: data.displayName || '',
 					photoUrl: data.photoUrl || '',
@@ -50,8 +51,11 @@ function EditProfileSection() {
 		if (!user) return;
 
 		try {
-			await updateDoc(doc(db, 'users', user.uid), { ...formData });
-			await updateProfile(user, { displayName: formData.displayName });
+			await saveUserProfile(user.uid, formData);
+			await updateProfile(user, {
+				displayName: formData.displayName,
+				photoURL: formData.photoUrl,
+			});
 			setMessage('Profile updated successfully.');
 		} catch (err) {
 			console.error(err);
@@ -60,47 +64,57 @@ function EditProfileSection() {
 	};
 
 	return (
-		<section className='space-y-4'>
-			<form onSubmit={handleSubmit} className='space-y-4 max-w-sm'>
-				<input
-					type='text'
-					placeholder='Your name'
-					value={formData.displayName}
-					onChange={e => handleChange('displayName', e.target.value)}
-					className='w-full px-3 py-2 rounded border border-border bg-input text-text'
-				/>
+		<section>
+			<h2 className='text-xl font-semibold mb-4'>Edit Profile</h2>
 
-				<input
-					type='url'
-					placeholder='Photo URL'
-					value={formData.photoUrl}
-					onChange={e => handleChange('photoUrl', e.target.value)}
-					className='w-full px-3 py-2 rounded border border-border bg-input text-text'
-				/>
+			<div className='flex flex-col lg:flex-row gap-8'>
+				<form onSubmit={handleSubmit} className='space-y-4 max-w-sm w-full'>
+					<input
+						type='text'
+						placeholder='Your name'
+						value={formData.displayName}
+						onChange={e => handleChange('displayName', e.target.value)}
+						className='w-full px-3 py-2 rounded border border-border bg-input text-text'
+					/>
 
-				<input
-					type='tel'
-					placeholder='Phone number'
-					value={formData.phone}
-					onChange={e => handleChange('phone', e.target.value)}
-					className='w-full px-3 py-2 rounded border border-border bg-input text-text'
-				/>
+					<input
+						type='url'
+						placeholder='Photo URL'
+						value={formData.photoUrl}
+						onChange={e => handleChange('photoUrl', e.target.value)}
+						className='w-full px-3 py-2 rounded border border-border bg-input text-text'
+					/>
 
-				<input
-					type='text'
-					placeholder='Address'
-					value={formData.address}
-					onChange={e => handleChange('address', e.target.value)}
-					className='w-full px-3 py-2 rounded border border-border bg-input text-text'
-				/>
+					<input
+						type='tel'
+						placeholder='Phone number'
+						value={formData.phone}
+						onChange={e => handleChange('phone', e.target.value)}
+						className='w-full px-3 py-2 rounded border border-border bg-input text-text'
+					/>
 
-				<button type='submit' className='px-4 py-2 rounded border border-primary text-primary bg-surface hover:bg-primary hover:text-white transition-colors'>
-					Update Profile
-				</button>
+					<input
+						type='text'
+						placeholder='Address'
+						value={formData.address}
+						onChange={e => handleChange('address', e.target.value)}
+						className='w-full px-3 py-2 rounded border border-border bg-input text-text'
+					/>
 
-				{message && <p className='text-sm text-accent'>{message}</p>}
-				{error && <p className='text-sm text-destructive'>{error}</p>}
-			</form>
+					<button type='submit' className='px-4 py-2 rounded border border-primary text-primary bg-surface hover:bg-primary hover:text-white transition-colors'>
+						Update Profile
+					</button>
+
+					{message && <p className='text-sm text-accent'>{message}</p>}
+					{error && <p className='text-sm text-destructive'>{error}</p>}
+				</form>
+
+				{formData.photoUrl ? (
+					<img src={formData.photoUrl} alt='Profile' className='rounded-full shadow w-60 h-60 object-cover border border-border' />
+				) : (
+					<div className='w-40 h-40 bg-surface border border-dashed border-border flex items-center justify-center text-muted-foreground rounded-full'>No photo</div>
+				)}
+			</div>
 		</section>
 	);
 }
