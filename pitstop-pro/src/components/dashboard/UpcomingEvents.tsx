@@ -77,7 +77,12 @@ function UpcomingEvents() {
 			{loading ? (
 				<p className='text-muted-foreground'>Loading events...</p>
 			) : events.length === 0 ? (
-				<div className='p-6 border border-gray-700 rounded-lg bg-surface text-center text-muted-foreground'>No upcoming events.</div>
+				<div className='p-6 border border-gray-700 rounded-lg bg-surface text-center text-muted-foreground space-y-4'>
+					<p>No upcoming events scheduled.</p>
+					<Link to='/maintenance' className='inline-block px-6 py-3 bg-primary text-background rounded-md font-medium hover:bg-opacity-90 transition'>
+						Add Maintenance
+					</Link>
+				</div>
 			) : (
 				<>
 					<ul className='space-y-4'>
