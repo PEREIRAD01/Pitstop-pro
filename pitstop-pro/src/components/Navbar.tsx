@@ -19,6 +19,8 @@ function Navbar({ onToggleSidebar }: NavbarProps) {
 		}
 	};
 
+	const isProfileIncomplete = user && !user.displayName;
+
 	return (
 		<nav className='fixed top-0 left-0 right-0 z-50 bg-surface text-text px-6 py-4 shadow-md'>
 			<div className='max-w-7xl mx-auto flex items-center justify-between'>
@@ -37,7 +39,17 @@ function Navbar({ onToggleSidebar }: NavbarProps) {
 				</div>
 
 				<div className='flex items-center gap-4'>
-					{user && <UserInfo />}
+					{user && (
+						<>
+							<UserInfo />
+
+							{isProfileIncomplete && (
+								<Link to='/settings' title='Your profile is incomplete. Click to complete it.' className='text-xs text-yellow-400 font-medium hover:underline transition ml-2'>
+									⚠️ Complete your profile
+								</Link>
+							)}
+						</>
+					)}
 
 					<ul className='flex gap-4 items-center text-sm sm:text-base'>
 						{user ? (
