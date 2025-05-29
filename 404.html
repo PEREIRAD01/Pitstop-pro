@@ -2,20 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>404 Redirect</title>
+    <title>Redirecting…</title>
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const base = '/Pitstop-pro';
-        const path = location.pathname;
-        const fullUrl = base + path.replace(base, '') + location.search + location.hash;
-
-        if (!location.pathname.startsWith(base)) {
-          window.location.replace(fullUrl);
-        } else {
-          document.body.innerHTML = '<h1 style="font-family:sans-serif;">404 - Page Not Found</h1>';
-        }
-      });
+     window.location.replace('/Pitstop-pro/index.html' + location.search + location.hash + location.pathname);
     </script>
   </head>
-  <body></body>
+  <body>
+    <h1 style="font-family:sans-serif;">Redirecting…</h1>
+  </body>
 </html>
