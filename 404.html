@@ -1,4 +1,11 @@
 <script>
-	const path = location.pathname.replace(/^\/Pitstop-pro/, '');
-	location.replace('/Pitstop-pro' + path + location.search + location.hash);
+  const base = '/Pitstop-pro';
+  const path = location.pathname;
+  const fullUrl = base + path.replace(base, '') + location.search + location.hash;
+
+  if (!location.pathname.startsWith(base)) {
+    window.location.replace(fullUrl);
+  } else {
+    document.body.innerHTML = '<h1>404 - Page Not Found</h1>';
+  }
 </script>
