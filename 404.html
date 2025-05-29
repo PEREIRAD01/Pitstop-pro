@@ -1,13 +1,3 @@
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Redirecting...</title>
-    <script>
-      const redirectTo = '/Pitstop-pro/index.html' + '?redirect=' + location.pathname + location.search + location.hash;
-      window.location.replace(redirectTo);
-    </script>
-  </head>
-  <body>
-    <h1 style="font-family:sans-serif;">Redirecting…</h1>
-  </body>
-</html>
+<script>
+  location.replace('/Pitstop-pro' + location.pathname);
+</script>
