@@ -1,3 +1,4 @@
 <script>
-	location.replace('/Pitstop-pro' + location.pathname + location.search + location.hash);
+	const path = location.pathname.replace(/^\/Pitstop-pro/, '');
+	location.replace('/Pitstop-pro' + path + location.search + location.hash);
 </script>
