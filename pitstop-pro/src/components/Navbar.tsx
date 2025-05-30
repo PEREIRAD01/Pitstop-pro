@@ -1,7 +1,9 @@
 import { Link, useLocation } from 'react-router-dom';
+import { List, X } from 'phosphor-react';
 import { useAuth } from '../hooks/useAuth';
 import logo from '../assets/logo-flat.png';
 import UserInfo from './UserInfo';
+import { useState } from 'react';
 
 type NavbarProps = {
 	onToggleSidebar?: () => void;
@@ -10,6 +12,7 @@ type NavbarProps = {
 function Navbar({ onToggleSidebar }: NavbarProps) {
 	const { user, logout } = useAuth();
 	const location = useLocation();
+	const [menuOpen, setMenuOpen] = useState(false);
 
 	const handleLogout = async () => {
 		try {
@@ -21,18 +24,23 @@ function Navbar({ onToggleSidebar }: NavbarProps) {
 
 	const isProfileIncomplete = user && !user.displayName;
 
+	const handleToggle = () => {
+		setMenuOpen(!menuOpen);
+		onToggleSidebar?.();
+	};
+
 	return (
 		<nav className='fixed top-0 left-0 right-0 z-50 bg-surface text-text px-6 py-4 shadow-md'>
 			<div className='max-w-7xl mx-auto flex items-center justify-between'>
 				<div className='flex items-center gap-4'>
 					{onToggleSidebar && (
-						<button onClick={onToggleSidebar} className='md:hidden border border-border text-text rounded px-3 py-2 hover:bg-border transition' aria-label='Toggle menu'>
-							Menu
+						<button onClick={handleToggle} className='md:hidden text-text hover:text-accent transition' aria-label={menuOpen ? 'Close menu' : 'Open menu'}>
+							{menuOpen ? <X size={24} /> : <List size={24} />}
 						</button>
 					)}
 
 					<Link to='/' className='flex items-center gap-2 transition-transform hover:scale-105'>
-						<img src={logo} alt='' className='h-12 w-auto' />
+						<img src={logo} alt='PitStop Pro logo' className='h-12 w-auto' />
 						<span className='sr-only'>PitStop Pro</span>
 						<span className='text-xl font-semibold text-primary hidden sm:inline'>PitStop Pro</span>
 					</Link>

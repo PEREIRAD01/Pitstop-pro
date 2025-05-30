@@ -1,0 +1,9 @@
+@layer components {
+	.btn-nav {
+		@apply px-4 py-2 rounded-md border border-primary text-primary bg-surface hover:bg-primary hover:text-background transition-colors whitespace-nowrap;
+	}
+
+	.btn-nav-solid {
+		@apply px-4 py-2 rounded-md bg-primary text-background hover:bg-opacity-90 transition-colors whitespace-nowrap;
+	}
+}

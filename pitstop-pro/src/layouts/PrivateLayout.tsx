@@ -6,15 +6,24 @@ import Navbar from '../components/Navbar';
 function PrivateLayout() {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 
+	const handleCloseSidebar = () => setSidebarOpen(false);
+
 	return (
-		<div className='pt-16 flex'>
-			<Sidebar isOpen={sidebarOpen} />
-			<main className={`w-full transition-all duration-300 px-6 py-8 ${sidebarOpen ? 'ml-64' : 'ml-0 md:ml-64'}`}>
+		<div className='pt-16'>
+			<Navbar onToggleSidebar={() => setSidebarOpen(prev => !prev)} />
+
+			<Sidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} />
+
+			<main
+				className={`
+					transition-all duration-300 px-6 py-8
+					${sidebarOpen ? 'md:ml-64' : 'md:ml-64'} 
+				`}
+			>
 				<div className='max-w-7xl mx-auto'>
 					<Outlet />
 				</div>
 			</main>
-			<Navbar onToggleSidebar={() => setSidebarOpen(prev => !prev)} />
 		</div>
 	);
 }
