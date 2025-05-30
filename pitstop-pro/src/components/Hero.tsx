@@ -1,9 +1,18 @@
-import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import carIllustration from '../assets/car-illustration.png';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Hero() {
 	const { user } = useAuth();
+	const navigate = useNavigate();
+
+	const handleGetStarted = () => {
+		if (user) {
+			navigate('/dashboard');
+		} else {
+			navigate('/register');
+		}
+	};
 
 	return (
 		<section className='bg-surface text-text py-16 px-6 pt-navbar'>
@@ -12,9 +21,10 @@ function Hero() {
 					<h1 className='text-4xl sm:text-5xl font-bold leading-tight text-primary'>Simplified Vehicle Management</h1>
 					<p className='text-lg text-gray-300'>Track maintenance, expenses, insurance and IUC – all in one place.</p>
 					<div className='flex flex-wrap gap-4'>
-						<Link to='/register' className='bg-primary text-background px-6 py-3 rounded-md text-base font-medium hover:bg-opacity-90 transition'>
+						<button onClick={handleGetStarted} className='bg-primary text-background px-6 py-3 rounded-md text-base font-medium hover:bg-opacity-90 transition'>
 							Get Started
-						</Link>
+						</button>
+
 						{!user && (
 							<Link to='/login' className='border border-primary text-primary px-6 py-3 rounded-md hover:bg-primary hover:text-background transition'>
 								Sign in
