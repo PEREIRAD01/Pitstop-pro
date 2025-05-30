@@ -1,6 +1,6 @@
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import carIllustration from '../assets/car-illustration.png';
-import { Link, useNavigate } from 'react-router-dom';
 
 function Hero() {
 	const { user } = useAuth();
@@ -24,12 +24,6 @@ function Hero() {
 						<button onClick={handleGetStarted} className='bg-primary text-background px-6 py-3 rounded-md text-base font-medium hover:bg-opacity-90 transition'>
 							Get Started
 						</button>
-
-						{!user && (
-							<Link to='/login' className='border border-primary text-primary px-6 py-3 rounded-md hover:bg-primary hover:text-background transition'>
-								Sign in
-							</Link>
-						)}
 					</div>
 				</div>
 
