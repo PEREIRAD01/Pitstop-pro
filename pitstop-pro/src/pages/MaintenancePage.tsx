@@ -3,20 +3,17 @@ import { TrackedPart } from '../types/maintenance';
 import TrackedPartsTable from '../components/TrackedPartsTable';
 import AddTrackedPartModal from '../components/modals/AddTrackedPartModal';
 import { fetchTrackedPartsByUser, updateTrackedPart, deleteTrackedPart } from '../services/trackedParts';
-import { getAuth } from 'firebase/auth';
-import { collection, } from 'firebase/firestore';
+import { collection, doc, setDoc,  } from 'firebase/firestore';
 import { db } from '../firebase/config';
-import { setDoc, doc } from 'firebase/firestore';
+import { useAuth } from '../hooks/useAuth';
 
 function MaintenancePage() {
+	const { user } = useAuth();
 	const [parts, setParts] = useState<TrackedPart[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [showModal, setShowModal] = useState(false);
 	const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
 	const [partToEdit, setPartToEdit] = useState<TrackedPart | null>(null);
-
-	const auth = getAuth();
-	const user = auth.currentUser;
 
 	const loadParts = useCallback(async () => {
 		if (!user) return;
@@ -27,30 +24,20 @@ function MaintenancePage() {
 	}, [user]);
 
 	useEffect(() => {
-		loadParts();
-	}, [loadParts]);
+		if (user) loadParts();
+	}, [user, loadParts]);
 
 	const handleAddPart = async (newPart: Omit<TrackedPart, 'id'>) => {
 		if (!user) return;
-
 		const docRef = doc(collection(db, 'trackedParts'));
-		const finalData: TrackedPart = {
-			...newPart,
-			id: docRef.id,
-		};
-
+		const finalData: TrackedPart = { ...newPart, id: docRef.id };
 		await setDoc(docRef, finalData);
 		await loadParts();
 	};
 
 	const handleEditPart = async (updated: TrackedPart) => {
-		try {
-			await updateTrackedPart(updated);
-			await loadParts();
-		} catch (error) {
-			alert('Erro ao atualizar a peça no Firestore. Verifica a consola.');
-			console.error('Erro ao atualizar:', updated, error);
-		}
+		await updateTrackedPart(updated);
+		await loadParts();
 	};
 
 	const handleDeletePart = async (id: string) => {
