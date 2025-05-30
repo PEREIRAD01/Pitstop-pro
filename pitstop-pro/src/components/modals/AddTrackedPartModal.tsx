@@ -8,8 +8,8 @@ type Props = {
 	mode: 'add' | 'edit';
 	defaultValues?: TrackedPart | null;
 	onClose: () => void;
-	onAdd: (newPart: TrackedPart) => void;
-	onEdit?: (updatedPart: TrackedPart) => void;
+	onAdd: (newPart: Omit<TrackedPart, 'id'>) => void;
+	onEdit: (updatedPart: TrackedPart) => void;
 };
 
 function AddTrackedPartModal({ isOpen, mode, defaultValues, onClose, onAdd, onEdit }: Props) {
@@ -65,8 +65,7 @@ function AddTrackedPartModal({ isOpen, mode, defaultValues, onClose, onAdd, onEd
 		const vehicle = vehicles.find(v => v.id === formData.vehicleId);
 		if (!vehicle) return;
 
-		const converted: TrackedPart = {
-			id: defaultValues?.id || crypto.randomUUID(),
+		const baseData = {
 			vehicleId: formData.vehicleId,
 			vehicleName: vehicle.vehicleName || `${vehicle.brand} ${vehicle.model}`,
 			partName: formData.partName,
@@ -78,10 +77,10 @@ function AddTrackedPartModal({ isOpen, mode, defaultValues, onClose, onAdd, onEd
 			userId: user.uid,
 		};
 
-		if (mode === 'edit' && onEdit) {
-			onEdit(converted);
+		if (mode === 'edit' && defaultValues?.id) {
+			onEdit({ ...baseData, id: defaultValues.id });
 		} else {
-			onAdd(converted);
+			onAdd(baseData);
 		}
 
 		onClose();
@@ -126,7 +125,6 @@ function AddTrackedPartModal({ isOpen, mode, defaultValues, onClose, onAdd, onEd
 								required
 							/>
 						</div>
-
 						<div>
 							<label className='block text-sm font-medium mb-1'>Install km</label>
 							<input
@@ -149,7 +147,6 @@ function AddTrackedPartModal({ isOpen, mode, defaultValues, onClose, onAdd, onEd
 								className='w-full p-2 rounded-md bg-input text-text border border-border'
 							/>
 						</div>
-
 						<div>
 							<label className='block text-sm font-medium mb-1'>Valid for (km)</label>
 							<input type='number' value={formData.validForKm} onChange={e => handleChange('validForKm', e.target.value)} className='w-full p-2 rounded-md bg-input text-text border border-border' />

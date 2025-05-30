@@ -1,11 +1,13 @@
 import { db } from '../firebase/config';
-import { collection, addDoc, getDocs, query, where, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { collection, setDoc, getDocs, query, where, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 import { TrackedPart } from '../types/maintenance';
 
 const COLLECTION = 'trackedParts';
 
-export const createTrackedPart = async (part: TrackedPart) => {
-	await addDoc(collection(db, COLLECTION), part);
+export const createTrackedPart = async (part: Omit<TrackedPart, 'id'>) => {
+	const docRef = doc(collection(db, COLLECTION));
+	const finalData: TrackedPart = { ...part, id: docRef.id };
+	await setDoc(docRef, finalData);
 };
 
 export const fetchTrackedPartsByUser = async (userId: string): Promise<TrackedPart[]> => {
@@ -19,10 +21,7 @@ export const fetchTrackedPartsByUser = async (userId: string): Promise<TrackedPa
 };
 
 export const updateTrackedPart = async (part: TrackedPart) => {
-	const ref = doc(db, COLLECTION, part.id);
-	const { id: _, ...rest } = part;
-	void _;
-	await updateDoc(ref, rest);
+	await updateDoc(doc(db, COLLECTION, part.id), part);
 };
 
 export const deleteTrackedPart = async (id: string) => {

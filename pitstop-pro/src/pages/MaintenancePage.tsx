@@ -2,8 +2,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { TrackedPart } from '../types/maintenance';
 import TrackedPartsTable from '../components/TrackedPartsTable';
 import AddTrackedPartModal from '../components/modals/AddTrackedPartModal';
-import { createTrackedPart, deleteTrackedPart, fetchTrackedPartsByUser, updateTrackedPart } from '../services/trackedParts';
+import { fetchTrackedPartsByUser, updateTrackedPart, deleteTrackedPart } from '../services/trackedParts';
 import { getAuth } from 'firebase/auth';
+import { collection, } from 'firebase/firestore';
+import { db } from '../firebase/config';
+import { setDoc, doc } from 'firebase/firestore';
 
 function MaintenancePage() {
 	const [parts, setParts] = useState<TrackedPart[]>([]);
@@ -27,20 +30,32 @@ function MaintenancePage() {
 		loadParts();
 	}, [loadParts]);
 
-	const handleAddPart = async (newPart: TrackedPart) => {
+	const handleAddPart = async (newPart: Omit<TrackedPart, 'id'>) => {
 		if (!user) return;
-		await createTrackedPart({ ...newPart, userId: user.uid });
+
+		const docRef = doc(collection(db, 'trackedParts'));
+		const finalData: TrackedPart = {
+			...newPart,
+			id: docRef.id,
+		};
+
+		await setDoc(docRef, finalData);
 		await loadParts();
 	};
 
 	const handleEditPart = async (updated: TrackedPart) => {
-		await updateTrackedPart(updated);
-		await loadParts();
+		try {
+			await updateTrackedPart(updated);
+			await loadParts();
+		} catch (error) {
+			alert('Erro ao atualizar a peça no Firestore. Verifica a consola.');
+			console.error('Erro ao atualizar:', updated, error);
+		}
 	};
 
 	const handleDeletePart = async (id: string) => {
-		const confirm = window.confirm('Are you sure you want to delete this part?');
-		if (!confirm) return;
+		const confirmDelete = window.confirm('Are you sure you want to delete this part?');
+		if (!confirmDelete) return;
 		await deleteTrackedPart(id);
 		await loadParts();
 	};
@@ -73,7 +88,6 @@ function MaintenancePage() {
 			</div>
 		</main>
 	);
-
 }
 
 export default MaintenancePage;
