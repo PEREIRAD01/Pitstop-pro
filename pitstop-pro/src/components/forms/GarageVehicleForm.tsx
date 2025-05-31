@@ -5,9 +5,9 @@ import { db } from '../../firebase/config';
 import { GarageVehicle } from '../../types/garageVehicle';
 
 type Props = {
-	mode: 'add' | 'edit';
+	mode: 'create' | 'edit';
 	defaultValues?: GarageVehicle | null;
-	onSuccess?: () => void;
+	onSuccess?: (vehicle: GarageVehicle) => void;
 };
 
 const GarageVehicleForm: React.FC<Props> = ({ mode, defaultValues, onSuccess }) => {
@@ -93,13 +93,13 @@ const GarageVehicleForm: React.FC<Props> = ({ mode, defaultValues, onSuccess }) 
 		try {
 			if (mode === 'edit' && defaultValues?.id) {
 				await updateDoc(doc(db, 'vehicles', defaultValues.id), dataToSave);
+				onSuccess?.({ ...dataToSave, id: defaultValues.id });
 			} else {
-				await addDoc(collection(db, 'vehicles'), dataToSave);
+				const docRef = await addDoc(collection(db, 'vehicles'), dataToSave);
+				onSuccess?.({ ...dataToSave, id: docRef.id });
 			}
 			setSuccess(true);
-			if (onSuccess) onSuccess();
-		} catch (err) {
-			console.error(err);
+		} catch {
 			setError('Something went wrong. Please try again.');
 		} finally {
 			setLoading(false);
@@ -109,7 +109,6 @@ const GarageVehicleForm: React.FC<Props> = ({ mode, defaultValues, onSuccess }) 
 	return (
 		<form onSubmit={handleSubmit}>
 			<div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-				{/* Coluna da imagem e campos relacionados */}
 				<div className='flex flex-col items-center w-full'>
 					{formData.photoUrl ? (
 						<img src={formData.photoUrl} alt='Vehicle' className='rounded-xl w-full max-w-sm object-cover border border-border' />
@@ -118,23 +117,15 @@ const GarageVehicleForm: React.FC<Props> = ({ mode, defaultValues, onSuccess }) 
 					)}
 
 					<div className='mt-4 w-full space-y-4'>
-						<div>
-							<label className='block text-sm font-medium text-text-muted mb-1'>Photo URL</label>
-							<input type='url' className={inputClass} value={formData.photoUrl} onChange={e => handleChange('photoUrl', e.target.value)} />
-						</div>
-
-						<div>
-							<label className='block text-sm font-medium text-text-muted mb-1'>Type</label>
-							<select className={inputClass} value={formData.type} onChange={e => handleChange('type', e.target.value)} required>
-								<option value=''>Select vehicle type</option>
-								<option value='car'>Car</option>
-								<option value='motorcycle'>Motorcycle</option>
-							</select>
-						</div>
+						<input type='url' placeholder='Photo URL' className={inputClass} value={formData.photoUrl} onChange={e => handleChange('photoUrl', e.target.value)} />
+						<select className={inputClass} value={formData.type} onChange={e => handleChange('type', e.target.value)} required>
+							<option value=''>Select vehicle type</option>
+							<option value='car'>Car</option>
+							<option value='motorcycle'>Motorcycle</option>
+						</select>
 					</div>
 				</div>
 
-				{/* Coluna da informação principal */}
 				<div className='space-y-4'>
 					{[
 						{ id: 'vehicleName', label: 'Vehicle name (optional)', required: false },
@@ -144,45 +135,42 @@ const GarageVehicleForm: React.FC<Props> = ({ mode, defaultValues, onSuccess }) 
 						{ id: 'year', label: 'Year', required: true },
 						{ id: 'kilometers', label: 'Kilometers', required: true },
 					].map(field => (
-						<div key={field.id}>
-							<label className='block text-sm font-medium text-text-muted mb-1'>{field.label}</label>
-							<input
-								type={field.id === 'year' || field.id === 'kilometers' ? 'number' : 'text'}
-								className={inputClass}
-								value={formData[field.id as keyof typeof formData]}
-								onChange={e => handleChange(field.id, field.id === 'year' || field.id === 'kilometers' ? Number(e.target.value) : e.target.value)}
-								required={field.required}
-							/>
-						</div>
+						<input
+							key={field.id}
+							placeholder={field.label}
+							type={field.id === 'year' || field.id === 'kilometers' ? 'number' : 'text'}
+							className={inputClass}
+							value={formData[field.id as keyof typeof formData]}
+							onChange={e => handleChange(field.id, field.id === 'year' || field.id === 'kilometers' ? Number(e.target.value) : e.target.value)}
+							required={field.required}
+						/>
 					))}
 				</div>
 			</div>
 
-			{/* Secção de datas */}
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6'>
-				<div>
-					<label className='block text-sm font-medium text-text-muted mb-1'>Insurance payment date</label>
-					<input type='date' className={inputClass} value={formData.insuranceDate} onChange={e => handleChange('insuranceDate', e.target.value)} required />
-				</div>
-				<div>
-					<label className='block text-sm font-medium text-text-muted mb-1'>Inspection date</label>
-					<input type='date' className={inputClass} value={formData.inspectionDate} onChange={e => handleChange('inspectionDate', e.target.value)} required />
-				</div>
-				<div>
-					<label className='block text-sm font-medium text-text-muted mb-1'>Car Circulation Unified Tax payment date</label>
-					<input type='date' className={inputClass} value={formData.taxDate} onChange={e => handleChange('taxDate', e.target.value)} required />
-				</div>
-				<div>
-					<label className='block text-sm font-medium text-text-muted mb-1'>Scheduled vehicle service date</label>
-					<input type='date' className={inputClass} value={formData.maintenanceDate} onChange={e => handleChange('maintenanceDate', e.target.value)} required />
-				</div>
+				{[
+					{ id: 'insuranceDate', label: 'Insurance Date' },
+					{ id: 'inspectionDate', label: 'Inspection Date' },
+					{ id: 'taxDate', label: 'Tax Date' },
+					{ id: 'maintenanceDate', label: 'Maintenance Date' },
+				].map(field => (
+					<input
+						key={field.id}
+						type='date'
+						placeholder={field.label}
+						className={inputClass}
+						value={formData[field.id as keyof typeof formData] as string}
+						onChange={e => handleChange(field.id, e.target.value)}
+						required
+					/>
+				))}
 			</div>
 
 			<div className='pt-6'>
 				<button type='submit' disabled={loading} className='bg-primary hover:bg-accent text-white font-medium px-4 py-2 rounded w-full transition disabled:opacity-50'>
 					{loading ? (mode === 'edit' ? 'Saving changes...' : 'Saving...') : mode === 'edit' ? 'Save Changes' : 'Save Vehicle'}
 				</button>
-
 				{success && <p className='text-accent mt-2 text-sm text-center'>Success!</p>}
 				{error && <p className='text-red-500 mt-2 text-sm text-center'>{error}</p>}
 			</div>

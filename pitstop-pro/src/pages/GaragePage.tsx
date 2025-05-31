@@ -16,9 +16,7 @@ const GaragePage: React.FC = () => {
 	const loadVehicles = async () => {
 		const auth = getAuth();
 		const currentUser = auth.currentUser;
-
 		if (!currentUser) return;
-
 		const data = await fetchUserVehicles();
 		setVehicles(data);
 	};
@@ -26,6 +24,10 @@ const GaragePage: React.FC = () => {
 	useEffect(() => {
 		loadVehicles();
 	}, []);
+
+	const handleVehicleCreated = (created: GarageVehicle) => {
+		setVehicles(prev => [...prev, created]);
+	};
 
 	return (
 		<div className='p-6 space-y-6'>
@@ -41,9 +43,10 @@ const GaragePage: React.FC = () => {
 
 			<GarageAddVehicleModal
 				isOpen={showModal}
-				onClose={() => {
+				onClose={() => setShowModal(false)}
+				onSuccess={created => {
+					handleVehicleCreated(created);
 					setShowModal(false);
-					loadVehicles();
 				}}
 			/>
 
@@ -53,7 +56,11 @@ const GaragePage: React.FC = () => {
 					onClose={() => {
 						setShowEditModal(false);
 						setSelectedVehicle(null);
-						loadVehicles();
+					}}
+					onSuccess={updatedVehicle => {
+						setVehicles(prev => prev.map(v => (v.id === updatedVehicle.id ? updatedVehicle : v)));
+						setShowEditModal(false);
+						setSelectedVehicle(null);
 					}}
 					vehicle={selectedVehicle}
 				/>
