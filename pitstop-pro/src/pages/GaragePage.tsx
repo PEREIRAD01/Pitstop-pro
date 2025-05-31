@@ -79,7 +79,6 @@ const GaragePage: React.FC = () => {
 						<GarageVehicleCard
 							key={vehicle.id}
 							vehicle={vehicle}
-							onDelete={() => {}}
 							onEdit={v => {
 								setSelectedVehicle(v);
 								setShowEditModal(true);

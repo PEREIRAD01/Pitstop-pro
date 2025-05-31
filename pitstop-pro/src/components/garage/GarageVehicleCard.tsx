@@ -7,29 +7,19 @@ import GarageEventLine from './GarageEventLine';
 type Props = {
 	vehicle: GarageVehicle;
 	onEdit: (vehicle: GarageVehicle) => void;
-	onDelete?: () => void;
 };
 
 const GarageVehicleCard: React.FC<Props> = ({ vehicle, onEdit }) => {
 	const handleDelete = async () => {
 		const confirmDelete = window.confirm(`Are you sure you want to delete ${vehicle.vehicleName || vehicle.brand + ' ' + vehicle.model}?`);
 		if (!confirmDelete) return;
-
-		try {
-			await deleteDoc(doc(db, 'vehicles', vehicle.id));
-		} catch (error) {
-			console.error('Error deleting vehicle:', error);
-		}
+		await deleteDoc(doc(db, 'vehicles', vehicle.id));
 	};
 
 	const toggleDone = async (field: keyof GarageVehicle) => {
-		try {
-			const ref = doc(db, 'vehicles', vehicle.id);
-			const newValue = !vehicle[field];
-			await updateDoc(ref, { [field]: newValue });
-		} catch (err) {
-			console.error('Failed to toggle field:', field, err);
-		}
+		const ref = doc(db, 'vehicles', vehicle.id);
+		const newValue = !vehicle[field];
+		await updateDoc(ref, { [field]: newValue });
 	};
 
 	return (

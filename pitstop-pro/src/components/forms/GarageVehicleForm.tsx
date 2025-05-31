@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { addDoc, updateDoc, doc, collection } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { db } from '../../firebase/config';
@@ -7,7 +7,7 @@ import { GarageVehicle } from '../../types/garageVehicle';
 type Props = {
 	mode: 'create' | 'edit';
 	defaultValues?: GarageVehicle | null;
-	onSuccess?: (vehicle: GarageVehicle) => void;
+	onSuccess?: () => void;
 };
 
 const GarageVehicleForm: React.FC<Props> = ({ mode, defaultValues, onSuccess }) => {
@@ -93,12 +93,11 @@ const GarageVehicleForm: React.FC<Props> = ({ mode, defaultValues, onSuccess }) 
 		try {
 			if (mode === 'edit' && defaultValues?.id) {
 				await updateDoc(doc(db, 'vehicles', defaultValues.id), dataToSave);
-				onSuccess?.({ ...dataToSave, id: defaultValues.id });
 			} else {
-				const docRef = await addDoc(collection(db, 'vehicles'), dataToSave);
-				onSuccess?.({ ...dataToSave, id: docRef.id });
+				await addDoc(collection(db, 'vehicles'), dataToSave);
 			}
 			setSuccess(true);
+			onSuccess?.();
 		} catch {
 			setError('Something went wrong. Please try again.');
 		} finally {
