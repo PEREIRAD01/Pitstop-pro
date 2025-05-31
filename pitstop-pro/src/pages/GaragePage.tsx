@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { getAuth } from 'firebase/auth';
+import { useEffect, useState } from 'react';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../firebase/config';
+import { getAuth } from 'firebase/auth';
+import { GarageVehicle } from '../types/garageVehicle';
 import GarageAddVehicleModal from '../components/modals/GarageAddVehicleModal';
 import GarageEditVehicleModal from '../components/modals/GarageEditVehicleModal';
 import GarageVehicleCard from '../components/garage/GarageVehicleCard';
-import { GarageVehicle } from '../types/garageVehicle';
 import carIllustration from '../assets/car-illustration.png';
 
-const GaragePage: React.FC = () => {
+const GaragePage = () => {
 	const [vehicles, setVehicles] = useState<GarageVehicle[]>([]);
 	const [showModal, setShowModal] = useState(false);
 	const [showEditModal, setShowEditModal] = useState(false);
@@ -16,21 +16,16 @@ const GaragePage: React.FC = () => {
 
 	useEffect(() => {
 		const auth = getAuth();
-		const currentUser = auth.currentUser;
-		if (!currentUser) return;
+		const user = auth.currentUser;
+		if (!user) return;
 
-		const q = query(collection(db, 'vehicles'), where('userId', '==', currentUser.uid));
+		const q = query(collection(db, 'vehicles'), where('userId', '==', user.uid));
 		const unsubscribe = onSnapshot(q, snapshot => {
 			const data = snapshot.docs.map(doc => ({
 				id: doc.id,
 				...doc.data(),
 			})) as GarageVehicle[];
-
-			setVehicles(prev => {
-				const newData = [...data];
-				const isDifferent = JSON.stringify(prev) !== JSON.stringify(newData);
-				return isDifferent ? newData : prev;
-			});
+			setVehicles(data);
 		});
 
 		return () => unsubscribe();
@@ -48,16 +43,12 @@ const GaragePage: React.FC = () => {
 				</button>
 			</div>
 
-			<GarageAddVehicleModal isOpen={showModal} onClose={() => setShowModal(false)} onSuccess={() => setShowModal(false)} />
+			<GarageAddVehicleModal isOpen={showModal} onClose={() => setShowModal(false)} />
 
 			{showEditModal && selectedVehicle && (
 				<GarageEditVehicleModal
 					isOpen={showEditModal}
 					onClose={() => {
-						setShowEditModal(false);
-						setSelectedVehicle(null);
-					}}
-					onSuccess={() => {
 						setShowEditModal(false);
 						setSelectedVehicle(null);
 					}}
