@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getAuth } from 'firebase/auth';
-import { fetchUserVehicles } from '../services/vehicles';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { db } from '../firebase/config';
 import GarageAddVehicleModal from '../components/modals/GarageAddVehicleModal';
 import GarageEditVehicleModal from '../components/modals/GarageEditVehicleModal';
 import GarageVehicleCard from '../components/garage/GarageVehicleCard';
@@ -13,21 +14,27 @@ const GaragePage: React.FC = () => {
 	const [showEditModal, setShowEditModal] = useState(false);
 	const [selectedVehicle, setSelectedVehicle] = useState<GarageVehicle | null>(null);
 
-	const loadVehicles = async () => {
+	useEffect(() => {
 		const auth = getAuth();
 		const currentUser = auth.currentUser;
 		if (!currentUser) return;
-		const data = await fetchUserVehicles();
-		setVehicles(data);
-	};
 
-	useEffect(() => {
-		loadVehicles();
+		const q = query(collection(db, 'vehicles'), where('userId', '==', currentUser.uid));
+		const unsubscribe = onSnapshot(q, snapshot => {
+			const data = snapshot.docs.map(doc => ({
+				id: doc.id,
+				...doc.data(),
+			})) as GarageVehicle[];
+
+			setVehicles(prev => {
+				const newData = [...data];
+				const isDifferent = JSON.stringify(prev) !== JSON.stringify(newData);
+				return isDifferent ? newData : prev;
+			});
+		});
+
+		return () => unsubscribe();
 	}, []);
-
-	const handleVehicleCreated = (created: GarageVehicle) => {
-		setVehicles(prev => [...prev, created]);
-	};
 
 	return (
 		<div className='p-6 space-y-6'>
@@ -41,14 +48,7 @@ const GaragePage: React.FC = () => {
 				</button>
 			</div>
 
-			<GarageAddVehicleModal
-				isOpen={showModal}
-				onClose={() => setShowModal(false)}
-				onSuccess={created => {
-					handleVehicleCreated(created);
-					setShowModal(false);
-				}}
-			/>
+			<GarageAddVehicleModal isOpen={showModal} onClose={() => setShowModal(false)} onSuccess={() => setShowModal(false)} />
 
 			{showEditModal && selectedVehicle && (
 				<GarageEditVehicleModal
@@ -57,8 +57,7 @@ const GaragePage: React.FC = () => {
 						setShowEditModal(false);
 						setSelectedVehicle(null);
 					}}
-					onSuccess={updatedVehicle => {
-						setVehicles(prev => prev.map(v => (v.id === updatedVehicle.id ? updatedVehicle : v)));
+					onSuccess={() => {
 						setShowEditModal(false);
 						setSelectedVehicle(null);
 					}}
@@ -80,7 +79,7 @@ const GaragePage: React.FC = () => {
 						<GarageVehicleCard
 							key={vehicle.id}
 							vehicle={vehicle}
-							onDelete={loadVehicles}
+							onDelete={() => {}}
 							onEdit={v => {
 								setSelectedVehicle(v);
 								setShowEditModal(true);
