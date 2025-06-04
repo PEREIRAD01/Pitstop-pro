@@ -53,7 +53,7 @@ const GarageVehicleForm: React.FC<Props> = ({ mode, defaultValues, onSuccess }) 
 		setFormData(prev => ({ ...prev, [field]: value }));
 	};
 
-	const inputClass = 'w-full p-2 rounded-md bg-input text-text border border-border focus:outline-none focus:ring-2 focus:ring-accent';
+	const inputClass = 'w-full h-10 px-3 rounded-md bg-input text-text placeholder:text-muted-foreground border border-border focus:outline-none focus:ring-2 focus:ring-accent';
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -112,37 +112,60 @@ const GarageVehicleForm: React.FC<Props> = ({ mode, defaultValues, onSuccess }) 
 					{formData.photoUrl ? (
 						<img src={formData.photoUrl} alt='Vehicle' className='rounded-xl w-full max-w-sm object-cover border border-border' />
 					) : (
-						<div className='w-full max-w-sm aspect-[4/3] bg-surface text-text-muted flex items-center justify-center rounded-xl border border-dashed border-border'>No photo</div>
+						<div className='w-full max-w-sm aspect-[4/3] bg-surface text-muted-foreground flex items-center justify-center rounded-xl border border-dashed border-border'>No photo</div>
 					)}
 
 					<div className='mt-4 w-full space-y-4'>
-						<input type='url' placeholder='Photo URL' className={inputClass} value={formData.photoUrl} onChange={e => handleChange('photoUrl', e.target.value)} />
-						<select className={inputClass} value={formData.type} onChange={e => handleChange('type', e.target.value)} required>
-							<option value=''>Select vehicle type</option>
-							<option value='car'>Car</option>
-							<option value='motorcycle'>Motorcycle</option>
-						</select>
+						<div className='flex flex-col gap-1'>
+							<label htmlFor='photoUrl' className='text-sm text-muted-foreground'>
+								Photo URL
+							</label>
+							<input
+								id='photoUrl'
+								type='url'
+								className={inputClass}
+								placeholder='e.g. https://example.com/photo.jpg'
+								value={formData.photoUrl}
+								onChange={e => handleChange('photoUrl', e.target.value)}
+							/>
+						</div>
+
+						<div className='flex flex-col gap-1'>
+							<label htmlFor='type' className='text-sm text-muted-foreground'>
+								Vehicle Type
+							</label>
+							<select id='type' className={inputClass} value={formData.type} onChange={e => handleChange('type', e.target.value)} required>
+								<option value=''>Select type</option>
+								<option value='car'>Car</option>
+								<option value='motorcycle'>Motorcycle</option>
+							</select>
+						</div>
 					</div>
 				</div>
 
 				<div className='space-y-4'>
 					{[
-						{ id: 'vehicleName', label: 'Vehicle name (optional)', required: false },
-						{ id: 'brand', label: 'Brand', required: true },
-						{ id: 'model', label: 'Model', required: true },
-						{ id: 'licensePlate', label: 'License Plate', required: true },
-						{ id: 'year', label: 'Year', required: true },
-						{ id: 'kilometers', label: 'Kilometers', required: true },
+						{ id: 'vehicleName', label: 'Vehicle Name', placeholder: 'Optional nickname', required: false },
+						{ id: 'brand', label: 'Brand', placeholder: 'e.g. Yamaha', required: true },
+						{ id: 'model', label: 'Model', placeholder: 'e.g. R1', required: true },
+						{ id: 'licensePlate', label: 'License Plate', placeholder: 'e.g. 00-AA-00', required: true },
+						{ id: 'year', label: 'Year', placeholder: 'e.g. 2020', required: true },
+						{ id: 'kilometers', label: 'Kilometers', placeholder: 'e.g. 15000', required: true },
 					].map(field => (
-						<input
-							key={field.id}
-							placeholder={field.label}
-							type={field.id === 'year' || field.id === 'kilometers' ? 'number' : 'text'}
-							className={inputClass}
-							value={formData[field.id as keyof typeof formData]}
-							onChange={e => handleChange(field.id, field.id === 'year' || field.id === 'kilometers' ? Number(e.target.value) : e.target.value)}
-							required={field.required}
-						/>
+						<div key={field.id} className='flex flex-col gap-1'>
+							<label htmlFor={field.id} className='text-sm text-muted-foreground'>
+								{field.label}
+							</label>
+							<input
+								id={field.id}
+								placeholder={field.placeholder}
+								type={field.id === 'year' || field.id === 'kilometers' ? 'number' : 'text'}
+								className={inputClass}
+								value={formData[field.id as keyof typeof formData]}
+								onChange={e => handleChange(field.id, field.id === 'year' || field.id === 'kilometers' ? Number(e.target.value) : e.target.value)}
+								required={field.required}
+							/>
+						</div>
 					))}
 				</div>
 			</div>
@@ -154,15 +177,12 @@ const GarageVehicleForm: React.FC<Props> = ({ mode, defaultValues, onSuccess }) 
 					{ id: 'taxDate', label: 'Tax Date' },
 					{ id: 'maintenanceDate', label: 'Maintenance Date' },
 				].map(field => (
-					<input
-						key={field.id}
-						type='date'
-						placeholder={field.label}
-						className={inputClass}
-						value={formData[field.id as keyof typeof formData] as string}
-						onChange={e => handleChange(field.id, e.target.value)}
-						required
-					/>
+					<div key={field.id} className='flex flex-col gap-1'>
+						<label htmlFor={field.id} className='text-sm text-muted-foreground'>
+							{field.label}
+						</label>
+						<input id={field.id} type='date' className={inputClass} value={formData[field.id as keyof typeof formData] as string} onChange={e => handleChange(field.id, e.target.value)} required />
+					</div>
 				))}
 			</div>
 
